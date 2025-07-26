@@ -1,0 +1,29 @@
+[
+  {
+    "address": "0xae2fc483527b8ef99eb5d9b44875f005ba1fae13",
+    "avg_multiplier": 150.5,
+    "win_rate": 0.85,
+    "last_active": 1735197600,
+    "deploy_count": 12,
+    "snipe_success": 8,
+    "risk_score": 15.2
+  },
+  {
+    "address": "0x6cc5f688a315f3dc28a7781717a9a798a59fda7b",
+    "avg_multiplier": 89.3,
+    "win_rate": 0.72,
+    "last_active": 1735197300,
+    "deploy_count": 6,
+    "snipe_success": 15,
+    "risk_score": 22.1
+  },
+  {
+    "address": "0x8ba1f109551bd432803012645hac136c22c70",
+    "avg_multiplier": 67.8,
+    "win_rate": 0.68,
+    "last_active": 1735196800,
+    "deploy_count": 3,
+    "snipe_success": 12,
+    "risk_score": 28.5
+  }
+]
