@@ -1,152 +1,108 @@
-use serde::{Deserialize, Serialize};
-use reqwest::Client;
-use ethers::{prelude::*, providers::{Provider, Http}, types::{Address, U256, U64}};
 use std::sync::Arc;
-use parking_lot::RwLock;
-use dashmap::DashMap;
-use crossbeam::channel;
-use lru::LruCache;
-use std::num::NonZeroUsize;
+use tokio::signal;
+use tracing::{info, error};
+use tracing_subscriber;
+use anyhow::Result;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-struct AlphaWallet {
-    address: String,
-    avg_multiplier: f64,
-    win_rate: f64,
-    last_active: u64,
-    deploy_count: u32,
-    snipe_success: u32,
-    risk_score: f32,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-struct TokenMetrics {
-    address: String,
-    liquidity: U256,
-    owner_renounced: bool,
-    verified: bool,
-    honeypot_risk: f32,
-    max_tx_amount: U256,
-    trading_enabled: bool,
-    transfer_tax: u8,
-}
-
-#[derive(Debug, Clone)]
-struct TradeSignal {
-    token_address: String,
-    wallet_address: String,
-    action: TradeAction,
-    amount: U256,
-    timestamp: u64,
-    confidence: f32,
-}
-
-#[derive(Debug, Clone)]
-enum TradeAction {
-    Buy,
-    Sell,
-    Deploy,
-}
-
-struct AlphaMirror {
-    alpha_wallets: Arc<DashMap<String, AlphaWallet>>,
-    token_cache: Arc<RwLock<LruCache<String, TokenMetrics>>>,
-    provider: Arc<Provider<Http>>,
-    http_client: Client,
-    signal_tx: channel::Sender<TradeSignal>,
-    signal_rx: channel::Receiver<TradeSignal>,
-    okx_dex_router: Address,
-    current_capital: Arc<RwLock<U256>>,
-}
-
-impl AlphaMirror {
-    async fn new() -> anyhow::Result<Self> {
-        let http_url = std::env::var("ETH_HTTP_URL").unwrap_or_else(|_| "https://eth-mainnet.alchemyapi.io/v2/demo".to_string());
-        let provider = Provider::<Http>::try_from(&http_url)?;
-        let (signal_tx, signal_rx) = channel::unbounded();
-        
-        Ok(Self {
-            alpha_wallets: Arc::new(DashMap::new()),
-            token_cache: Arc::new(RwLock::new(LruCache::new(NonZeroUsize::new(10000).unwrap()))),
-            provider: Arc::new(provider),
-            http_client: Client::new(),
-            signal_tx,
-            signal_rx,
-            okx_dex_router: "0x1111111254EEB25477B68fb85Ed929f73A960582".parse()?,
-            current_capital: Arc::new(RwLock::new(U256::from(1000) * U256::exp10(18))),
-        })
-    }
-
-    async fn load_alpha_wallets(&self) -> anyhow::Result<()> {
-        let data = tokio::fs::read_to_string("data/alpha_wallets.json").await?;
-        let wallets: Vec<AlphaWallet> = serde_json::from_str(&data)?;
-        
-        wallets.into_iter().for_each(|wallet| {
-            self.alpha_wallets.insert(wallet.address.clone(), wallet);
-        });
-        
-        println!("✅ Loaded {} elite wallets", self.alpha_wallets.len());
-        Ok(())
-    }
-
-    async fn monitor_mempool(&self) -> anyhow::Result<()> {
-        println!("👀 Monitoring mempool for alpha wallet activity...");
-        let mut counter = 0u64;
-        
-        loop {
-            tokio::time::sleep(tokio::time::Duration::from_secs(10)).await;
-            
-            match self.provider.get_block_number().await {
-                Ok(latest_block) => {
-                    let block_num = latest_block.as_u64();
-                    println!("📊 Block: {} | Tracking {} wallets", block_num, self.alpha_wallets.len());
-                    
-                    if counter % 10 == 0 {
-                        println!("🔍 Alpha wallet activity detected!");
-                        self.simulate_trade_signal().await;
-                    }
-                }
-                Err(e) => {
-                    println!("⚠️ Error getting block: {}", e);
-                }
-            }
-            
-            counter += 1;
-        }
-    }
-
-    async fn simulate_trade_signal(&self) {
-        if !self.alpha_wallets.is_empty() {
-            let wallet_count = self.alpha_wallets.len();
-            println!("⚡ Simulated trade signal from {} elite wallets", wallet_count);
-        }
-    }
-
-    async fn process_signals(&self) -> anyhow::Result<()> {
-        while let Ok(_signal) = self.signal_rx.recv() {
-            println!("⚡ Processing trade signal...");
-        }
-        Ok(())
-    }
-
-    async fn run(&self) -> anyhow::Result<()> {
-        self.load_alpha_wallets().await?;
-        
-        let mempool_monitor = self.monitor_mempool();
-        let signal_processor = self.process_signals();
-        
-        tokio::try_join!(mempool_monitor, signal_processor)?;
-        
-        Ok(())
-    }
-}
+use mimic_engine::{MimicEngine, alpha_tracker::AlphaTracker};
 
 #[tokio::main]
-async fn main() -> anyhow::Result<()> {
-    println!("🧠 Elite Alpha Mirror Bot - Rust Engine Starting...");
-    println!("💰 Target: $1K → $1M through smart money mirroring");
+async fn main() -> Result<()> {
+    tracing_subscriber::fmt::init();
     
-    let mirror = AlphaMirror::new().await?;
-    mirror.run().await?;
+    info!("Starting Elite Wallet Mimic Engine");
+    info!("Target: $1K -> $1M via 100x token deployment mirroring");
+    
+    let mut engine = MimicEngine::new().await?;
+    
+    let alpha_tracker = AlphaTracker::new();
+    
+    info!("Scanning for 100x tokens from last 30 days...");
+    let hundred_x_tokens = alpha_tracker.find_100x_tokens(30).await?;
+    info!("Found {} tokens with 100x+ performance", hundred_x_tokens.len());
+    
+    info!("Identifying deployer wallets...");
+    let mut deployer_wallets = alpha_tracker.find_deployer_wallets(&hundred_x_tokens).await?;
+    info!("Found {} elite deployer wallets", deployer_wallets.len());
+    
+    info!("Identifying sniper wallets...");
+    let mut sniper_wallets = alpha_tracker.find_sniper_wallets(&hundred_x_tokens).await?;
+    info!("Found {} elite sniper wallets", sniper_wallets.len());
+    
+    deployer_wallets.append(&mut sniper_wallets);
+    
+    info!("Updating wallet performance scores...");
+    alpha_tracker.update_wallet_scores(&mut deployer_wallets).await?;
+    
+    info!("Loading {} alpha wallets into engine", deployer_wallets.len());
+    engine.load_alpha_wallets(deployer_wallets.clone()).await?;
+    
+    alpha_tracker.export_alpha_wallets(&deployer_wallets).await?;
+    info!("Alpha wallets exported to alpha_wallets.json");
+    
+    info!("Starting mempool monitoring...");
+    info!("Watching for transactions from {} elite wallets", deployer_wallets.len());
+    info!("Initial capital: ${:.2}", engine.get_portfolio_value());
+    
+    let engine_clone = Arc::new(engine);
+    let monitoring_engine = engine_clone.clone();
+    
+    let monitoring_task = tokio::spawn(async move {
+        if let Err(e) = monitoring_engine.start_monitoring().await {
+            error!("Monitoring error: {}", e);
+        }
+    });
+    
+    let portfolio_engine = engine_clone.clone();
+    let portfolio_task = tokio::spawn(async move {
+        let mut interval = tokio::time::interval(tokio::time::Duration::from_secs(30));
+        
+        loop {
+            interval.tick().await;
+            
+            if let Ok(summary) = portfolio_engine.execution.get_portfolio_summary().await {
+                info!("Portfolio Update: {}", summary);
+            }
+            
+            if let Err(e) = portfolio_engine.execution.update_positions().await {
+                error!("Position update error: {}", e);
+            }
+        }
+    });
+    
+    info!("Elite Wallet Mimic Engine is now running...");
+    info!("Press Ctrl+C to stop");
+    
+    tokio::select! {
+        _ = signal::ctrl_c() => {
+            info!("Shutdown signal received");
+        }
+        _ = monitoring_task => {
+            error!("Monitoring task ended unexpectedly");
+        }
+        _ = portfolio_task => {
+            error!("Portfolio task ended unexpectedly");
+        }
+    }
+    
+    info!("Performing emergency close of all positions...");
+    engine_clone.execution.emergency_close_all().await?;
+    
+    let final_value = engine_clone.get_portfolio_value();
+    let initial_value = 1000.0;
+    let total_return = ((final_value - initial_value) / initial_value) * 100.0;
+    
+    info!("Final Portfolio Value: ${:.2}", final_value);
+    info!("Total Return: {:.2}%", total_return);
+    
+    if total_return >= 100000.0 {
+        info!("🎉 TARGET ACHIEVED: $1K -> $1M+ via elite wallet mirroring!");
+    } else if total_return >= 1000.0 {
+        info!("💎 EXCELLENT: 10x+ return achieved!");
+    } else if total_return >= 100.0 {
+        info!("📈 GOOD: Doubled money via smart money following");
+    }
+    
+    info!("Elite Wallet Mimic Engine shutdown complete");
     Ok(())
 }

@@ -1,0 +1,6 @@
+web3
+aiohttp
+websockets
+pandas
+numpy
+eth-account
