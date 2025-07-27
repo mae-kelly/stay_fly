@@ -1,0 +1,790 @@
+{
+  "timestamp": "2025-07-27T06:06:15.190895",
+  "summary": {
+    "total_tests": 68,
+    "passed_tests": 65,
+    "failed_tests": 3,
+    "success_rate": 95.58823529411765,
+    "total_runtime": 28.62231707572937
+  },
+  "component_breakdown": {
+    "API": {
+      "passed": 5,
+      "failed": 0
+    },
+    "Files": {
+      "passed": 19,
+      "failed": 0
+    },
+    "Python": {
+      "passed": 7,
+      "failed": 1
+    },
+    "Rust": {
+      "passed": 2,
+      "failed": 0
+    },
+    "Discovery": {
+      "passed": 3,
+      "failed": 0
+    },
+    "WebSocket": {
+      "passed": 3,
+      "failed": 0
+    },
+    "OKX": {
+      "passed": 3,
+      "failed": 0
+    },
+    "Security": {
+      "passed": 0,
+      "failed": 1
+    },
+    "Coordinator": {
+      "passed": 4,
+      "failed": 0
+    },
+    "Config": {
+      "passed": 6,
+      "failed": 0
+    },
+    "Database": {
+      "passed": 2,
+      "failed": 0
+    },
+    "Docker": {
+      "passed": 4,
+      "failed": 0
+    },
+    "Logging": {
+      "passed": 2,
+      "failed": 0
+    },
+    "Errors": {
+      "passed": 2,
+      "failed": 1
+    },
+    "Performance": {
+      "passed": 3,
+      "failed": 0
+    }
+  },
+  "test_results": [
+    {
+      "component": "API",
+      "test_name": "Ethereum RPC",
+      "passed": true,
+      "duration_ms": 152.34112739562988,
+      "error_message": "",
+      "details": {
+        "details": "Block: 23,009,768"
+      }
+    },
+    {
+      "component": "API",
+      "test_name": "Ethereum WebSocket",
+      "passed": true,
+      "duration_ms": 224.98798370361328,
+      "error_message": "",
+      "details": {
+        "details": "Subscription ID: 0x4cfe149e3c04b31dd97fe8983b34f93a"
+      }
+    },
+    {
+      "component": "API",
+      "test_name": "Etherscan",
+      "passed": true,
+      "duration_ms": 5392.945766448975,
+      "error_message": "",
+      "details": {
+        "details": "ETH Supply: 122,373,866"
+      }
+    },
+    {
+      "component": "API",
+      "test_name": "OKX",
+      "passed": true,
+      "duration_ms": 541.3351058959961,
+      "error_message": "",
+      "details": {
+        "details": "Connection successful"
+      }
+    },
+    {
+      "component": "API",
+      "test_name": "Discord",
+      "passed": true,
+      "duration_ms": 239.0761375427246,
+      "error_message": "",
+      "details": {
+        "details": "Webhook delivered"
+      }
+    },
+    {
+      "component": "Files",
+      "test_name": "File: .env",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Size: 1075 bytes"
+      }
+    },
+    {
+      "component": "Files",
+      "test_name": "File: requirements.txt",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Size: 410 bytes"
+      }
+    },
+    {
+      "component": "Files",
+      "test_name": "File: core/master_coordinator.py",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Size: 33654 bytes"
+      }
+    },
+    {
+      "component": "Files",
+      "test_name": "File: core/real_discovery.py",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Size: 37059 bytes"
+      }
+    },
+    {
+      "component": "Files",
+      "test_name": "File: core/okx_live_engine.py",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Size: 32577 bytes"
+      }
+    },
+    {
+      "component": "Files",
+      "test_name": "File: core/ultra_fast_engine.py",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Size: 10757 bytes"
+      }
+    },
+    {
+      "component": "Files",
+      "test_name": "File: python/analysis/security.py",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Size: 26948 bytes"
+      }
+    },
+    {
+      "component": "Files",
+      "test_name": "File: python/okx/client.py",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Size: 5509 bytes"
+      }
+    },
+    {
+      "component": "Files",
+      "test_name": "File: rust/Cargo.toml",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Size: 815 bytes"
+      }
+    },
+    {
+      "component": "Files",
+      "test_name": "File: rust/src/main.rs",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Size: 4351 bytes"
+      }
+    },
+    {
+      "component": "Files",
+      "test_name": "File: Dockerfile",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Size: 890 bytes"
+      }
+    },
+    {
+      "component": "Files",
+      "test_name": "File: docker-compose.yml",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Size: 1124 bytes"
+      }
+    },
+    {
+      "component": "Files",
+      "test_name": "Dir: core",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "23 files"
+      }
+    },
+    {
+      "component": "Files",
+      "test_name": "Dir: python",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "17 files"
+      }
+    },
+    {
+      "component": "Files",
+      "test_name": "Dir: rust",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "4247 files"
+      }
+    },
+    {
+      "component": "Files",
+      "test_name": "Dir: data",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "13 files"
+      }
+    },
+    {
+      "component": "Files",
+      "test_name": "Dir: logs",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "9 files"
+      }
+    },
+    {
+      "component": "Files",
+      "test_name": "Dir: monitoring",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "3 files"
+      }
+    },
+    {
+      "component": "Files",
+      "test_name": "Dir: tests",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "11 files"
+      }
+    },
+    {
+      "component": "Python",
+      "test_name": "Package: aiohttp",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Imported successfully"
+      }
+    },
+    {
+      "component": "Python",
+      "test_name": "Package: asyncio",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Imported successfully"
+      }
+    },
+    {
+      "component": "Python",
+      "test_name": "Package: websockets",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Imported successfully"
+      }
+    },
+    {
+      "component": "Python",
+      "test_name": "Package: web3",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Imported successfully"
+      }
+    },
+    {
+      "component": "Python",
+      "test_name": "Package: pandas",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Imported successfully"
+      }
+    },
+    {
+      "component": "Python",
+      "test_name": "Package: numpy",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Imported successfully"
+      }
+    },
+    {
+      "component": "Python",
+      "test_name": "Package: requests",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Imported successfully"
+      }
+    },
+    {
+      "component": "Python",
+      "test_name": "Package: python-dotenv",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "No module named 'python-dotenv'",
+      "details": null
+    },
+    {
+      "component": "Rust",
+      "test_name": "Cargo.toml",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Found"
+      }
+    },
+    {
+      "component": "Rust",
+      "test_name": "Cargo available",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "cargo 1.88.0 (Homebrew)"
+      }
+    },
+    {
+      "component": "Discovery",
+      "test_name": "Initialization",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Engine created"
+      }
+    },
+    {
+      "component": "Discovery",
+      "test_name": "Database Init",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "SQLite database ready"
+      }
+    },
+    {
+      "component": "Discovery",
+      "test_name": "Rate Limiting",
+      "passed": true,
+      "duration_ms": 0.17595291137695312,
+      "error_message": "",
+      "details": {
+        "details": "Working"
+      }
+    },
+    {
+      "component": "WebSocket",
+      "test_name": "Initialization",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Engine created"
+      }
+    },
+    {
+      "component": "WebSocket",
+      "test_name": "Elite Wallets",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Loaded 2 wallets"
+      }
+    },
+    {
+      "component": "WebSocket",
+      "test_name": "DEX Routers",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Configured 8 routers"
+      }
+    },
+    {
+      "component": "OKX",
+      "test_name": "Initialization",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Simulation mode: False"
+      }
+    },
+    {
+      "component": "OKX",
+      "test_name": "API Configuration",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Credentials configured"
+      }
+    },
+    {
+      "component": "OKX",
+      "test_name": "Signature Creation",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Working"
+      }
+    },
+    {
+      "component": "Security",
+      "test_name": "Analyzer Test",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "cannot import name 'decode_abi' from 'eth_abi' (/Users/maevekelly/stay_fly/venv/lib/python3.13/site-packages/eth_abi/__init__.py)",
+      "details": null
+    },
+    {
+      "component": "Coordinator",
+      "test_name": "Initialization",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Capital: $100.0"
+      }
+    },
+    {
+      "component": "Coordinator",
+      "test_name": "Starting Capital",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "100.0"
+      }
+    },
+    {
+      "component": "Coordinator",
+      "test_name": "Max Position Size",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "0.1"
+      }
+    },
+    {
+      "component": "Coordinator",
+      "test_name": "Max Positions",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "3"
+      }
+    },
+    {
+      "component": "Config",
+      "test_name": "Ethereum HTTP RPC URL",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Set: https://eth-mainnet...."
+      }
+    },
+    {
+      "component": "Config",
+      "test_name": "Ethereum WebSocket URL",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Set: wss://eth-mainnet.ws..."
+      }
+    },
+    {
+      "component": "Config",
+      "test_name": "Etherscan API Key",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Set: K4SEVFZ3PI8STM73VKV8..."
+      }
+    },
+    {
+      "component": "Config",
+      "test_name": "Starting Capital Amount",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Set: 100.0..."
+      }
+    },
+    {
+      "component": "Config",
+      "test_name": "Maximum Position Size",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Set: 0.10..."
+      }
+    },
+    {
+      "component": "Config",
+      "test_name": "Maximum Positions",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Set: 3..."
+      }
+    },
+    {
+      "component": "Database",
+      "test_name": "SQLite Available",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "3.50.3"
+      }
+    },
+    {
+      "component": "Database",
+      "test_name": "AsyncSQLite",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Working"
+      }
+    },
+    {
+      "component": "Docker",
+      "test_name": "Dockerfile",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Found"
+      }
+    },
+    {
+      "component": "Docker",
+      "test_name": "docker-compose.yml",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Found"
+      }
+    },
+    {
+      "component": "Docker",
+      "test_name": ".dockerignore",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Found"
+      }
+    },
+    {
+      "component": "Docker",
+      "test_name": "Docker Available",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Docker version 28.0.4, build b8034c0"
+      }
+    },
+    {
+      "component": "Logging",
+      "test_name": "Config File",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "YAML loaded"
+      }
+    },
+    {
+      "component": "Logging",
+      "test_name": "Log Directory",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Exists"
+      }
+    },
+    {
+      "component": "Errors",
+      "test_name": "Network timeout simulation",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "Exception not raised",
+      "details": null
+    },
+    {
+      "component": "Errors",
+      "test_name": "Invalid JSON parsing",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Exception handled correctly"
+      }
+    },
+    {
+      "component": "Errors",
+      "test_name": "File not found",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Exception handled correctly"
+      }
+    },
+    {
+      "component": "Performance",
+      "test_name": "CPU Usage",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "7.3%"
+      }
+    },
+    {
+      "component": "Performance",
+      "test_name": "Memory Usage",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "81.7% (1502 MB available)"
+      }
+    },
+    {
+      "component": "Performance",
+      "test_name": "Disk Usage",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "33.4% (20 GB free)"
+      }
+    }
+  ],
+  "api_results": [
+    {
+      "service": "Ethereum RPC",
+      "endpoint": "eth_blockNumber",
+      "status_code": 200,
+      "response_time_ms": 152.34112739562988,
+      "success": true,
+      "error": ""
+    },
+    {
+      "service": "Ethereum WebSocket",
+      "endpoint": "eth_subscribe",
+      "status_code": 101,
+      "response_time_ms": 224.98798370361328,
+      "success": true,
+      "error": ""
+    },
+    {
+      "service": "Etherscan",
+      "endpoint": "ethsupply",
+      "status_code": 200,
+      "response_time_ms": 5392.945766448975,
+      "success": true,
+      "error": ""
+    },
+    {
+      "service": "OKX",
+      "endpoint": "time",
+      "status_code": 200,
+      "response_time_ms": 541.3351058959961,
+      "success": true,
+      "error": ""
+    },
+    {
+      "service": "Discord",
+      "endpoint": "webhook",
+      "status_code": 204,
+      "response_time_ms": 239.0761375427246,
+      "success": true,
+      "error": ""
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+# Elite Alpha Mirror Bot - Optimized .gitignore
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+env/
+*.egg-info/
+.pytest_cache/
+.coverage
+*.log
+
+# Environment and secrets
+.env
+.env.local
+*.key
+*.pem
+
+# Data and temporary files
+data/*.db
+data/*.json
+logs/*.log
+temp/
+*.tmp
+*.backup
+
+# OS and IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build and distribution
+build/
+dist/
+*.tar.gz
+*.zip

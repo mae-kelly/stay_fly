@@ -1,0 +1,635 @@
+{
+  "timestamp": "2025-07-27T05:59:02.981522",
+  "summary": {
+    "total_tests": 64,
+    "passed_tests": 24,
+    "failed_tests": 40,
+    "success_rate": 37.5,
+    "total_runtime": 1.0956358909606934
+  },
+  "component_breakdown": {
+    "API": {
+      "passed": 0,
+      "failed": 5
+    },
+    "Files": {
+      "passed": 0,
+      "failed": 19
+    },
+    "Python": {
+      "passed": 7,
+      "failed": 1
+    },
+    "Rust": {
+      "passed": 0,
+      "failed": 1
+    },
+    "Discovery": {
+      "passed": 3,
+      "failed": 0
+    },
+    "WebSocket": {
+      "passed": 3,
+      "failed": 0
+    },
+    "OKX": {
+      "passed": 2,
+      "failed": 1
+    },
+    "Security": {
+      "passed": 0,
+      "failed": 1
+    },
+    "Coordinator": {
+      "passed": 4,
+      "failed": 0
+    },
+    "Config": {
+      "passed": 0,
+      "failed": 6
+    },
+    "Database": {
+      "passed": 2,
+      "failed": 0
+    },
+    "Docker": {
+      "passed": 1,
+      "failed": 3
+    },
+    "Logging": {
+      "passed": 0,
+      "failed": 1
+    },
+    "Errors": {
+      "passed": 2,
+      "failed": 1
+    },
+    "Performance": {
+      "passed": 0,
+      "failed": 1
+    }
+  },
+  "test_results": [
+    {
+      "component": "API",
+      "test_name": "Ethereum RPC",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "ETH_HTTP_URL not configured",
+      "details": null
+    },
+    {
+      "component": "API",
+      "test_name": "Ethereum WebSocket",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "ETH_WS_URL not configured",
+      "details": null
+    },
+    {
+      "component": "API",
+      "test_name": "Etherscan",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "ETHERSCAN_API_KEY not configured",
+      "details": null
+    },
+    {
+      "component": "API",
+      "test_name": "OKX",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "OKX credentials not configured",
+      "details": null
+    },
+    {
+      "component": "API",
+      "test_name": "Discord",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "DISCORD_WEBHOOK not configured",
+      "details": null
+    },
+    {
+      "component": "Files",
+      "test_name": "File: .env",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "Missing",
+      "details": null
+    },
+    {
+      "component": "Files",
+      "test_name": "File: requirements.txt",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "Missing",
+      "details": null
+    },
+    {
+      "component": "Files",
+      "test_name": "File: core/master_coordinator.py",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "Missing",
+      "details": null
+    },
+    {
+      "component": "Files",
+      "test_name": "File: core/real_discovery.py",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "Missing",
+      "details": null
+    },
+    {
+      "component": "Files",
+      "test_name": "File: core/okx_live_engine.py",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "Missing",
+      "details": null
+    },
+    {
+      "component": "Files",
+      "test_name": "File: core/ultra_fast_engine.py",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "Missing",
+      "details": null
+    },
+    {
+      "component": "Files",
+      "test_name": "File: python/analysis/security.py",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "Missing",
+      "details": null
+    },
+    {
+      "component": "Files",
+      "test_name": "File: python/okx/client.py",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "Missing",
+      "details": null
+    },
+    {
+      "component": "Files",
+      "test_name": "File: rust/Cargo.toml",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "Missing",
+      "details": null
+    },
+    {
+      "component": "Files",
+      "test_name": "File: rust/src/main.rs",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "Missing",
+      "details": null
+    },
+    {
+      "component": "Files",
+      "test_name": "File: Dockerfile",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "Missing",
+      "details": null
+    },
+    {
+      "component": "Files",
+      "test_name": "File: docker-compose.yml",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "Missing",
+      "details": null
+    },
+    {
+      "component": "Files",
+      "test_name": "Dir: core",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "Missing",
+      "details": null
+    },
+    {
+      "component": "Files",
+      "test_name": "Dir: python",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "Missing",
+      "details": null
+    },
+    {
+      "component": "Files",
+      "test_name": "Dir: rust",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "Missing",
+      "details": null
+    },
+    {
+      "component": "Files",
+      "test_name": "Dir: data",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "Missing",
+      "details": null
+    },
+    {
+      "component": "Files",
+      "test_name": "Dir: logs",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "Missing",
+      "details": null
+    },
+    {
+      "component": "Files",
+      "test_name": "Dir: monitoring",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "Missing",
+      "details": null
+    },
+    {
+      "component": "Files",
+      "test_name": "Dir: tests",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "Missing",
+      "details": null
+    },
+    {
+      "component": "Python",
+      "test_name": "Package: aiohttp",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Imported successfully"
+      }
+    },
+    {
+      "component": "Python",
+      "test_name": "Package: asyncio",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Imported successfully"
+      }
+    },
+    {
+      "component": "Python",
+      "test_name": "Package: websockets",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Imported successfully"
+      }
+    },
+    {
+      "component": "Python",
+      "test_name": "Package: web3",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Imported successfully"
+      }
+    },
+    {
+      "component": "Python",
+      "test_name": "Package: pandas",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Imported successfully"
+      }
+    },
+    {
+      "component": "Python",
+      "test_name": "Package: numpy",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Imported successfully"
+      }
+    },
+    {
+      "component": "Python",
+      "test_name": "Package: requests",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Imported successfully"
+      }
+    },
+    {
+      "component": "Python",
+      "test_name": "Package: python-dotenv",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "No module named 'python-dotenv'",
+      "details": null
+    },
+    {
+      "component": "Rust",
+      "test_name": "Rust directory",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "Directory missing",
+      "details": null
+    },
+    {
+      "component": "Discovery",
+      "test_name": "Initialization",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Engine created"
+      }
+    },
+    {
+      "component": "Discovery",
+      "test_name": "Database Init",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "SQLite database ready"
+      }
+    },
+    {
+      "component": "Discovery",
+      "test_name": "Rate Limiting",
+      "passed": true,
+      "duration_ms": 0.1399517059326172,
+      "error_message": "",
+      "details": {
+        "details": "Working"
+      }
+    },
+    {
+      "component": "WebSocket",
+      "test_name": "Initialization",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Engine created"
+      }
+    },
+    {
+      "component": "WebSocket",
+      "test_name": "Elite Wallets",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Loaded 2 wallets"
+      }
+    },
+    {
+      "component": "WebSocket",
+      "test_name": "DEX Routers",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Configured 8 routers"
+      }
+    },
+    {
+      "component": "OKX",
+      "test_name": "Initialization",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Simulation mode: True"
+      }
+    },
+    {
+      "component": "OKX",
+      "test_name": "API Configuration",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "Missing credentials",
+      "details": null
+    },
+    {
+      "component": "OKX",
+      "test_name": "Signature Creation",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Working"
+      }
+    },
+    {
+      "component": "Security",
+      "test_name": "Analyzer Test",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "cannot import name 'decode_abi' from 'eth_abi' (/Users/maevekelly/stay_fly/venv/lib/python3.13/site-packages/eth_abi/__init__.py)",
+      "details": null
+    },
+    {
+      "component": "Coordinator",
+      "test_name": "Initialization",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Capital: $1000.0"
+      }
+    },
+    {
+      "component": "Coordinator",
+      "test_name": "Starting Capital",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "1000.0"
+      }
+    },
+    {
+      "component": "Coordinator",
+      "test_name": "Max Position Size",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "0.3"
+      }
+    },
+    {
+      "component": "Coordinator",
+      "test_name": "Max Positions",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "5"
+      }
+    },
+    {
+      "component": "Config",
+      "test_name": "Ethereum HTTP RPC URL",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "Not configured",
+      "details": null
+    },
+    {
+      "component": "Config",
+      "test_name": "Ethereum WebSocket URL",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "Not configured",
+      "details": null
+    },
+    {
+      "component": "Config",
+      "test_name": "Etherscan API Key",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "Not configured",
+      "details": null
+    },
+    {
+      "component": "Config",
+      "test_name": "Starting Capital Amount",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "Not configured",
+      "details": null
+    },
+    {
+      "component": "Config",
+      "test_name": "Maximum Position Size",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "Not configured",
+      "details": null
+    },
+    {
+      "component": "Config",
+      "test_name": "Maximum Positions",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "Not configured",
+      "details": null
+    },
+    {
+      "component": "Database",
+      "test_name": "SQLite Available",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "3.50.3"
+      }
+    },
+    {
+      "component": "Database",
+      "test_name": "AsyncSQLite",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Working"
+      }
+    },
+    {
+      "component": "Docker",
+      "test_name": "Dockerfile",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "Missing",
+      "details": null
+    },
+    {
+      "component": "Docker",
+      "test_name": "docker-compose.yml",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "Missing",
+      "details": null
+    },
+    {
+      "component": "Docker",
+      "test_name": ".dockerignore",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "Missing",
+      "details": null
+    },
+    {
+      "component": "Docker",
+      "test_name": "Docker Available",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Docker version 28.0.4, build b8034c0"
+      }
+    },
+    {
+      "component": "Logging",
+      "test_name": "Logging Test",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "No module named 'yaml'",
+      "details": null
+    },
+    {
+      "component": "Errors",
+      "test_name": "Network timeout simulation",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "Exception not raised",
+      "details": null
+    },
+    {
+      "component": "Errors",
+      "test_name": "Invalid JSON parsing",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Exception handled correctly"
+      }
+    },
+    {
+      "component": "Errors",
+      "test_name": "File not found",
+      "passed": true,
+      "duration_ms": 0,
+      "error_message": "",
+      "details": {
+        "details": "Exception handled correctly"
+      }
+    },
+    {
+      "component": "Performance",
+      "test_name": "Performance Test",
+      "passed": false,
+      "duration_ms": 0,
+      "error_message": "No module named 'psutil'",
+      "details": null
+    }
+  ],
+  "api_results": []
+}

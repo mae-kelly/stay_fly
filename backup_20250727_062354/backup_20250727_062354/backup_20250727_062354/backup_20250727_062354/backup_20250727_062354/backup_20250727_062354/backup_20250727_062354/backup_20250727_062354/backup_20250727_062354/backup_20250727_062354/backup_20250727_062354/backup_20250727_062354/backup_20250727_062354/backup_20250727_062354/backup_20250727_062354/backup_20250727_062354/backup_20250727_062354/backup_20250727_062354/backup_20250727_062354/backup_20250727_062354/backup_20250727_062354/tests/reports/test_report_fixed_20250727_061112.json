@@ -1,0 +1,319 @@
+{
+  "timestamp": "2025-07-27T06:11:12.737374",
+  "summary": {
+    "total_tests": 36,
+    "passed_tests": 36,
+    "failed_tests": 0,
+    "success_rate": 100.0,
+    "total_runtime": 9.770407915115356,
+    "categories": {
+      "Python": {
+        "total": 10,
+        "passed": 10,
+        "failed": 0
+      },
+      "Blockchain": {
+        "total": 3,
+        "passed": 3,
+        "failed": 0
+      },
+      "API": {
+        "total": 1,
+        "passed": 1,
+        "failed": 0
+      },
+      "Files": {
+        "total": 11,
+        "passed": 11,
+        "failed": 0
+      },
+      "Database": {
+        "total": 1,
+        "passed": 1,
+        "failed": 0
+      },
+      "Config": {
+        "total": 1,
+        "passed": 1,
+        "failed": 0
+      },
+      "Core": {
+        "total": 4,
+        "passed": 4,
+        "failed": 0
+      },
+      "ML": {
+        "total": 2,
+        "passed": 2,
+        "failed": 0
+      },
+      "Performance": {
+        "total": 3,
+        "passed": 3,
+        "failed": 0
+      }
+    }
+  },
+  "detailed_results": [
+    {
+      "name": "Version 3.13.5",
+      "category": "Python",
+      "passed": true,
+      "duration_ms": 0.0016689300537109375,
+      "error_message": ""
+    },
+    {
+      "name": "Import aiohttp",
+      "category": "Python",
+      "passed": true,
+      "duration_ms": 0.00095367431640625,
+      "error_message": ""
+    },
+    {
+      "name": "Import asyncio",
+      "category": "Python",
+      "passed": true,
+      "duration_ms": 0.0011920928955078125,
+      "error_message": ""
+    },
+    {
+      "name": "Import pandas",
+      "category": "Python",
+      "passed": true,
+      "duration_ms": 5803.483963012695,
+      "error_message": ""
+    },
+    {
+      "name": "Import numpy",
+      "category": "Python",
+      "passed": true,
+      "duration_ms": 0.0011920928955078125,
+      "error_message": ""
+    },
+    {
+      "name": "Import requests",
+      "category": "Python",
+      "passed": true,
+      "duration_ms": 66.02120399475098,
+      "error_message": ""
+    },
+    {
+      "name": "Import websockets",
+      "category": "Python",
+      "passed": true,
+      "duration_ms": 0.8180141448974609,
+      "error_message": ""
+    },
+    {
+      "name": "Import python-dotenv",
+      "category": "Python",
+      "passed": true,
+      "duration_ms": 2.1619796752929688,
+      "error_message": ""
+    },
+    {
+      "name": "Import PyYAML",
+      "category": "Python",
+      "passed": true,
+      "duration_ms": 146.79217338562012,
+      "error_message": ""
+    },
+    {
+      "name": "Import psutil",
+      "category": "Python",
+      "passed": true,
+      "duration_ms": 243.2699203491211,
+      "error_message": ""
+    },
+    {
+      "name": "Import web3",
+      "category": "Blockchain",
+      "passed": true,
+      "duration_ms": 439.8350715637207,
+      "error_message": ""
+    },
+    {
+      "name": "Import eth-account",
+      "category": "Blockchain",
+      "passed": true,
+      "duration_ms": 0.00095367431640625,
+      "error_message": ""
+    },
+    {
+      "name": "eth_abi functionality",
+      "category": "Blockchain",
+      "passed": true,
+      "duration_ms": 0.110626220703125,
+      "error_message": ""
+    },
+    {
+      "name": "HTTP Connectivity",
+      "category": "API",
+      "passed": true,
+      "duration_ms": 202.54898071289062,
+      "error_message": ""
+    },
+    {
+      "name": "core/master_coordinator.py: 33654 bytes",
+      "category": "Files",
+      "passed": true,
+      "duration_ms": 0.0438690185546875,
+      "error_message": ""
+    },
+    {
+      "name": "core/real_discovery.py: 37059 bytes",
+      "category": "Files",
+      "passed": true,
+      "duration_ms": 0.019788742065429688,
+      "error_message": ""
+    },
+    {
+      "name": "core/okx_live_engine.py: 32577 bytes",
+      "category": "Files",
+      "passed": true,
+      "duration_ms": 0.015020370483398438,
+      "error_message": ""
+    },
+    {
+      "name": "core/ultra_fast_engine.py: 10757 bytes",
+      "category": "Files",
+      "passed": true,
+      "duration_ms": 0.012874603271484375,
+      "error_message": ""
+    },
+    {
+      "name": "python/analysis/security.py: 26948 bytes",
+      "category": "Files",
+      "passed": true,
+      "duration_ms": 0.01811981201171875,
+      "error_message": ""
+    },
+    {
+      "name": "requirements.txt: 410 bytes",
+      "category": "Files",
+      "passed": true,
+      "duration_ms": 0.012874603271484375,
+      "error_message": ""
+    },
+    {
+      "name": ".env: 1075 bytes",
+      "category": "Files",
+      "passed": true,
+      "duration_ms": 0.014781951904296875,
+      "error_message": ""
+    },
+    {
+      "name": "Dir data: 5 files",
+      "category": "Files",
+      "passed": true,
+      "duration_ms": 0.23603439331054688,
+      "error_message": ""
+    },
+    {
+      "name": "Dir logs: 3 files",
+      "category": "Files",
+      "passed": true,
+      "duration_ms": 0.13780593872070312,
+      "error_message": ""
+    },
+    {
+      "name": "Dir core: 9 files",
+      "category": "Files",
+      "passed": true,
+      "duration_ms": 0.15497207641601562,
+      "error_message": ""
+    },
+    {
+      "name": "Dir python: 1 files",
+      "category": "Files",
+      "passed": true,
+      "duration_ms": 0.09989738464355469,
+      "error_message": ""
+    },
+    {
+      "name": "SQLite Operations",
+      "category": "Database",
+      "passed": true,
+      "duration_ms": 2.6311874389648438,
+      "error_message": ""
+    },
+    {
+      "name": "Environment Variables: 15 loaded",
+      "category": "Config",
+      "passed": true,
+      "duration_ms": 0.5059242248535156,
+      "error_message": ""
+    },
+    {
+      "name": "Master Coordinator Import",
+      "category": "Core",
+      "passed": true,
+      "duration_ms": 3.2472610473632812,
+      "error_message": ""
+    },
+    {
+      "name": "Elite Discovery Import",
+      "category": "Core",
+      "passed": true,
+      "duration_ms": 3.532886505126953,
+      "error_message": ""
+    },
+    {
+      "name": "OKX Engine Import",
+      "category": "Core",
+      "passed": true,
+      "duration_ms": 3.3500194549560547,
+      "error_message": ""
+    },
+    {
+      "name": "Ultra-Fast Engine Import",
+      "category": "Core",
+      "passed": true,
+      "duration_ms": 2.1970272064208984,
+      "error_message": ""
+    },
+    {
+      "name": "PyTorch Basic Operations",
+      "category": "ML",
+      "passed": true,
+      "duration_ms": 1018.5589790344238,
+      "error_message": ""
+    },
+    {
+      "name": "ML Brain Initialization",
+      "category": "ML",
+      "passed": true,
+      "duration_ms": 821.6240406036377,
+      "error_message": ""
+    },
+    {
+      "name": "CPU Usage: 9.2%",
+      "category": "Performance",
+      "passed": true,
+      "duration_ms": 1005.4290294647217,
+      "error_message": ""
+    },
+    {
+      "name": "Memory: 82.1% used",
+      "category": "Performance",
+      "passed": true,
+      "duration_ms": 1005.7539939880371,
+      "error_message": ""
+    },
+    {
+      "name": "Disk: 33.4% used",
+      "category": "Performance",
+      "passed": true,
+      "duration_ms": 1005.8250427246094,
+      "error_message": ""
+    }
+  ],
+  "system_info": {
+    "python_version": "3.13.5",
+    "platform": "macOS-15.5-arm64-arm-64bit-Mach-O",
+    "architecture": [
+      "64bit",
+      "Mach-O"
+    ]
+  }
+}
