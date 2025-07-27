@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  elite-bot:
+    build: .
+    container_name: elite-alpha-mirror-bot
+    environment:
+      - NODE_ENV=production
+      - RUST_LOG=info
+      - PYTHONPATH=/app
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./config:/app/config
+    restart: unless-stopped
+    networks:
+      - bot-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8080/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  redis:
+    image: redis:7-alpine
+    container_name: elite-bot-redis
+    volumes:
+      - redis_data:/data
+    networks:
+      - bot-network
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: elite-bot-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    networks:
+      - bot-network
+    restart: unless-stopped
+
+volumes:
+  redis_data:
+  prometheus_data:
+
+networks:
+  bot-network:
+    driver: bridge

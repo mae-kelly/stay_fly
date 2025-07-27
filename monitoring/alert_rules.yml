@@ -1,0 +1,47 @@
+groups:
+  - name: elite_bot_alerts
+    rules:
+      - alert: HighCPUUsage
+        expr: cpu_percent > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage is {{ $value }}% for more than 5 minutes"
+
+      - alert: CriticalCPUUsage
+        expr: cpu_percent > 95
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Critical CPU usage detected"
+          description: "CPU usage is {{ $value }}% for more than 2 minutes"
+
+      - alert: HighMemoryUsage
+        expr: memory_percent > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage detected"
+          description: "Memory usage is {{ $value }}% for more than 5 minutes"
+
+      - alert: LowTradeSuccessRate
+        expr: trade_success_rate < 50
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Low trade success rate"
+          description: "Trade success rate is {{ $value }}% for more than 10 minutes"
+
+      - alert: BotDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Elite Bot is down"
+          description: "Elite Alpha Mirror Bot has been down for more than 1 minute"

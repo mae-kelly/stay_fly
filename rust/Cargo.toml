@@ -27,3 +27,17 @@ opt-level = 3
 lto = true
 codegen-units = 1
 panic = "abort"
+
+# Additional production dependencies
+[dependencies.tokio-tungstenite]
+version = "0.20"
+features = ["native-tls"]
+
+[dependencies.web3]
+version = "0.19"
+features = ["http", "ws"]
+
+[dependencies.futures-util]
+version = "0.3"
+default-features = false
+features = ["sink", "std"]

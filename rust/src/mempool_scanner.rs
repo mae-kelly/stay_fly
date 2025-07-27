@@ -387,9 +387,25 @@ impl MempoolScanner {
         ws_url: String,
         tx_sender: mpsc::Sender<Transaction>,
     ) -> Result<()> {
-        // This is a placeholder for reconnection logic
-        // In a real implementation, you'd monitor connection health
-        // and trigger reconnections as needed
+        let performance_stats = self.performance_stats.clone();
+        
+        tokio::spawn(async move {
+            let mut last_activity = Instant::now();
+            let mut check_interval = tokio::time::interval(Duration::from_secs(30));
+            
+            loop {
+                check_interval.tick().await;
+                
+                let stats = performance_stats.read();
+                if stats.uptime_start.elapsed() - last_activity.elapsed() > Duration::from_secs(120) {
+                    tracing::warn!("🔄 No activity for 2 minutes, connection may be stale");
+                    // Trigger reconnection logic here if needed
+                }
+                
+                last_activity = Instant::now();
+            }
+        });
+        
         Ok(())
     }
 
@@ -502,5 +518,9 @@ impl MempoolScanner {
             stats.failed_executions,
             stats.uptime_start.elapsed().as_secs()
         )
+    }
+
+    pub async fn start(&self) -> Result<()> {
+        self.start_realtime_monitoring().await
     }
 }
