@@ -1,6 +1,31 @@
-web3
-aiohttp
-websockets
-pandas
-numpy
-eth-account
+# Core dependencies
+aiohttp==3.9.1
+asyncio==3.4.3
+requests==2.31.0
+
+# Blockchain
+web3==6.11.3
+eth-abi==4.2.1
+eth-account==0.9.0
+
+# Data processing
+pandas==2.1.4
+numpy==1.25.2
+aiosqlite==0.19.0
+
+# WebSocket
+websockets==12.0
+
+# Additional utilities
+python-dotenv==1.0.0
+click==8.1.7
+colorama==0.4.6
+tabulate==0.9.0
+tqdm==4.66.1
+
+# Development dependencies (optional)
+pytest==7.4.3
+pytest-asyncio==0.21.1
+black==23.11.0
+flake8==6.1.0
+mypy==1.7.1
