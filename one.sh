@@ -1,482 +1,482 @@
 #!/bin/bash
-set -e
 
-echo "⚡ CREATING ULTRA-FAST REAL-TIME TRADING SYSTEM"
-echo "🧠 With Mac M1 ML Learning from Historical Data"
-echo "🚀 WebSocket-First Architecture for Maximum Speed"
-echo ""
+# Elite Alpha Mirror Bot - Production Deployment Script
+# This script deploys the hardened system to production with all safety measures
 
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
-pip install scikit-learn numpy pandas websockets aiohttp
+set -euo pipefail
 
-cat > core/ml_brain.py << 'EOF'
-import torch
-import torch.nn as nn
-import numpy as np
-import pandas as pd
-import asyncio
-import json
-import time
-from datetime import datetime, timedelta
-from dataclasses import dataclass
-from typing import List, Dict, Optional
-import sqlite3
-import aiohttp
+echo "🚀 Elite Alpha Mirror Bot - Production Deployment"
+echo "=================================================="
 
-@dataclass
-class TradeSignal:
-    confidence: float
-    action: str
-    token_address: str
-    price_target: float
-    risk_score: float
-    ml_score: float
+# Color codes
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+PURPLE='\033[0;35m'
+NC='\033[0m'
 
-class CryptoPredictor(nn.Module):
-    def __init__(self, input_size=50, hidden_size=128, num_layers=3):
-        super().__init__()
-        self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True, dropout=0.2)
-        self.attention = nn.MultiheadAttention(hidden_size, 8, batch_first=True)
-        self.fc = nn.Sequential(
-            nn.Linear(hidden_size, 64),
-            nn.ReLU(),
-            nn.Dropout(0.3),
-            nn.Linear(64, 32),
-            nn.ReLU(),
-            nn.Linear(32, 1),
-            nn.Sigmoid()
-        )
-        
-    def forward(self, x):
-        lstm_out, _ = self.lstm(x)
-        attn_out, _ = self.attention(lstm_out, lstm_out, lstm_out)
-        return self.fc(attn_out[:, -1, :])
+# Configuration
+DEPLOYMENT_LOG="logs/deployment_$(date +%Y%m%d_%H%M%S).log"
+HEALTH_CHECK_RETRIES=30
+HEALTH_CHECK_DELAY=10
 
-class MLBrain:
-    def __init__(self):
-        self.device = torch.device('mps' if torch.backends.mps.is_available() else 'cpu')
-        self.model = CryptoPredictor().to(self.device)
-        self.optimizer = torch.optim.AdamW(self.model.parameters(), lr=0.001)
-        self.criterion = nn.BCELoss()
-        self.scaler = None
-        self.session = None
-        self.training_data = []
-        self.real_time_features = []
-        
-    async def __aenter__(self):
-        self.session = aiohttp.ClientSession()
-        await self.load_historical_data()
-        await self.train_initial_model()
-        return self
-        
-    async def __aexit__(self, *args):
-        if self.session:
-            await self.session.close()
+# Logging function
+log() {
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - $1" | tee -a "$DEPLOYMENT_LOG"
+}
+
+# Error handler
+error_exit() {
+    echo -e "${RED}❌ Error: $1${NC}" >&2
+    log "ERROR: $1"
+    exit 1
+}
+
+# Success message
+success() {
+    echo -e "${GREEN}✅ $1${NC}"
+    log "SUCCESS: $1"
+}
+
+# Warning message
+warning() {
+    echo -e "${YELLOW}⚠️ $1${NC}"
+    log "WARNING: $1"
+}
+
+# Info message
+info() {
+    echo -e "${BLUE}ℹ️ $1${NC}"
+    log "INFO: $1"
+}
+
+# Pre-deployment safety checks
+pre_deployment_checks() {
+    echo -e "${BLUE}🔍 Running pre-deployment safety checks...${NC}"
     
-    async def load_historical_data(self):
-        conn = sqlite3.connect('data/crypto_history.db')
-        conn.execute('''CREATE TABLE IF NOT EXISTS price_data 
-                       (timestamp INTEGER, token TEXT, price REAL, volume REAL, 
-                        market_cap REAL, volatility REAL, rsi REAL, macd REAL)''')
-        
-        try:
-            url = "https://api.coingecko.com/api/v3/coins/markets"
-            params = {'vs_currency': 'usd', 'order': 'market_cap_desc', 'per_page': 100}
-            async with self.session.get(url, params=params) as response:
-                if response.status == 200:
-                    data = await response.json()
-                    for coin in data:
-                        features = self.extract_features(coin)
-                        if features:
-                            self.training_data.append(features)
-        except:
-            pass
-        conn.close()
+    # Check if .env.production exists
+    if [ ! -f ".env.production" ]; then
+        error_exit ".env.production not found. Run ./production_setup.sh first"
+    fi
     
-    def extract_features(self, coin_data):
-        try:
-            return [
-                float(coin_data.get('current_price', 0)),
-                float(coin_data.get('market_cap', 0)),
-                float(coin_data.get('total_volume', 0)),
-                float(coin_data.get('price_change_percentage_24h', 0)),
-                float(coin_data.get('price_change_percentage_7d', 0)),
-                float(coin_data.get('market_cap_rank', 999)),
-                float(coin_data.get('circulating_supply', 0)),
-                time.time()
-            ]
-        except:
-            return None
+    # Check if secrets are configured
+    if grep -q "YOUR_" .env.production; then
+        error_exit "Placeholder values found in .env.production. Please configure all API keys"
+    fi
     
-    async def train_initial_model(self):
-        if len(self.training_data) < 50:
-            return
-            
-        data = np.array(self.training_data)
-        X = torch.FloatTensor(data[:, :-2]).to(self.device)
-        y = torch.FloatTensor((data[:, -2] > 5).astype(float)).to(self.device)
-        
-        X = X.unsqueeze(1).repeat(1, 10, 1)
-        
-        self.model.train()
-        for epoch in range(100):
-            self.optimizer.zero_grad()
-            outputs = self.model(X).squeeze()
-            loss = self.criterion(outputs, y)
-            loss.backward()
-            self.optimizer.step()
+    # Check if paper trading is enabled
+    if ! grep -q "PAPER_TRADING_MODE=true" .env.production; then
+        warning "Paper trading mode not enabled"
+        echo -e "${RED}🚨 LIVE TRADING DETECTED!${NC}"
+        echo -e "${RED}This will use real money!${NC}"
+        echo ""
+        read -p "Type 'I UNDERSTAND THE RISKS' to continue with live trading: " -r
+        if [[ $REPLY != "I UNDERSTAND THE RISKS" ]]; then
+            error_exit "Live trading not confirmed. Enable PAPER_TRADING_MODE=true for safety"
+        fi
+    fi
     
-    async def predict_token_movement(self, token_data):
-        if not token_data:
-            return 0.5
-        
-        features = torch.FloatTensor(token_data).unsqueeze(0).unsqueeze(1).to(self.device)
-        self.model.eval()
-        with torch.no_grad():
-            prediction = self.model(features).item()
-        return prediction
+    # Check Docker availability
+    if ! command -v docker &> /dev/null; then
+        error_exit "Docker not found. Please install Docker first"
+    fi
     
-    async def generate_trade_signal(self, token_address, current_price, volume, market_data):
-        features = [current_price, volume] + list(market_data.values())
-        ml_score = await self.predict_token_movement(features)
-        
-        confidence = min(ml_score * 1.2, 0.95)
-        action = "BUY" if ml_score > 0.7 else "HOLD"
-        
-        return TradeSignal(
-            confidence=confidence,
-            action=action,
-            token_address=token_address,
-            price_target=current_price * (1 + ml_score),
-            risk_score=1 - ml_score,
-            ml_score=ml_score
-        )
+    if ! command -v docker-compose &> /dev/null; then
+        error_exit "Docker Compose not found. Please install Docker Compose first"
+    fi
     
-    async def update_model(self, trade_result, actual_outcome):
-        pass
+    # Check disk space
+    DISK_USAGE=$(df . | awk 'NR==2{print $5}' | sed 's/%//')
+    if [ "$DISK_USAGE" -gt 80 ]; then
+        warning "Disk usage is ${DISK_USAGE}%. Consider freeing up space"
+    fi
+    
+    # Check available memory
+    MEMORY_GB=$(free -g | awk 'NR==2{print $2}')
+    if [ "$MEMORY_GB" -lt 4 ]; then
+        warning "Only ${MEMORY_GB}GB RAM available. Consider upgrading for better performance"
+    fi
+    
+    success "Pre-deployment checks completed"
+}
+
+# Build production images
+build_production_images() {
+    echo -e "${BLUE}🏗️ Building production Docker images...${NC}"
+    
+    # Build main application image
+    log "Building production Docker image..."
+    docker build -f Dockerfile.prod -t elite-alpha-bot:production . || error_exit "Failed to build Docker image"
+    
+    success "Production Docker image built successfully"
+}
+
+# Setup production database
+setup_production_database() {
+    echo -e "${BLUE}🗄️ Setting up production database...${NC}"
+    
+    # Start PostgreSQL container first
+    log "Starting PostgreSQL container..."
+    docker-compose -f docker-compose.prod.yml up -d postgres
+    
+    # Wait for PostgreSQL to be ready
+    info "Waiting for PostgreSQL to be ready..."
+    for i in $(seq 1 30); do
+        if docker-compose -f docker-compose.prod.yml exec -T postgres pg_isready -U elite_bot; then
+            break
+        fi
+        if [ "$i" -eq 30 ]; then
+            error_exit "PostgreSQL failed to start within 5 minutes"
+        fi
+        sleep 10
+    done
+    
+    # Run database migrations
+    log "Running database initialization..."
+    docker-compose -f docker-compose.prod.yml exec -T postgres psql -U elite_bot -d elite_bot_prod -f /docker-entrypoint-initdb.d/init.sql || true
+    
+    success "Database setup completed"
+}
+
+# Deploy production services
+deploy_production_services() {
+    echo -e "${BLUE}🚢 Deploying production services...${NC}"
+    
+    # Copy environment file
+    cp .env.production .env
+    
+    # Start all production services
+    log "Starting all production services..."
+    docker-compose -f docker-compose.prod.yml up -d
+    
+    success "Production services deployed"
+}
+
+# Wait for services to be healthy
+wait_for_health_checks() {
+    echo -e "${BLUE}🏥 Waiting for health checks...${NC}"
+    
+    services=("elite-bot-prod" "elite-redis-prod" "elite-postgres-prod")
+    
+    for service in "${services[@]}"; do
+        info "Checking health of $service..."
+        
+        for i in $(seq 1 $HEALTH_CHECK_RETRIES); do
+            if docker inspect "$service" | grep -q '"Health"' && \
+               docker inspect "$service" | grep -q '"healthy"'; then
+                success "$service is healthy"
+                break
+            elif [ "$i" -eq $HEALTH_CHECK_RETRIES ]; then
+                warning "$service health check timeout"
+                docker logs "$service" --tail 20
+            else
+                sleep $HEALTH_CHECK_DELAY
+            fi
+        done
+    done
+    
+    # Check application health endpoint
+    info "Checking application health endpoint..."
+    for i in $(seq 1 $HEALTH_CHECK_RETRIES); do
+        if curl -f -s http://localhost:8080/health > /dev/null; then
+            success "Application health endpoint responding"
+            break
+        elif [ "$i" -eq $HEALTH_CHECK_RETRIES ]; then
+            error_exit "Application health endpoint not responding after $((HEALTH_CHECK_RETRIES * HEALTH_CHECK_DELAY)) seconds"
+        else
+            sleep $HEALTH_CHECK_DELAY
+        fi
+    done
+}
+
+# Run post-deployment tests
+run_post_deployment_tests() {
+    echo -e "${BLUE}🧪 Running post-deployment tests...${NC}"
+    
+    # Test database connectivity
+    info "Testing database connectivity..."
+    if docker-compose -f docker-compose.prod.yml exec -T postgres psql -U elite_bot -d elite_bot_prod -c "SELECT 1;" > /dev/null; then
+        success "Database connectivity test passed"
+    else
+        error_exit "Database connectivity test failed"
+    fi
+    
+    # Test Redis connectivity
+    info "Testing Redis connectivity..."
+    if docker-compose -f docker-compose.prod.yml exec -T redis redis-cli -a "${REDIS_PASSWORD}" ping | grep -q "PONG"; then
+        success "Redis connectivity test passed"
+    else
+        error_exit "Redis connectivity test failed"
+    fi
+    
+    # Test API endpoints
+    info "Testing API endpoints..."
+    
+    # Health endpoint
+    if curl -f -s http://localhost:8080/health | grep -q "healthy"; then
+        success "Health endpoint test passed"
+    else
+        error_exit "Health endpoint test failed"
+    fi
+    
+    # Metrics endpoint
+    if curl -f -s http://localhost:8081/metrics | grep -q "cpu_percent"; then
+        success "Metrics endpoint test passed"
+    else
+        warning "Metrics endpoint test failed"
+    fi
+    
+    success "Post-deployment tests completed"
+}
+
+# Setup monitoring and alerting
+setup_monitoring() {
+    echo -e "${BLUE}📊 Setting up monitoring and alerting...${NC}"
+    
+    # Start security monitoring
+    if [ -f "scripts/security/monitor_security.sh" ]; then
+        info "Starting security monitoring..."
+        nohup scripts/security/monitor_security.sh start > logs/security_monitor.log 2>&1 &
+        echo $! > logs/security_monitor.pid
+        success "Security monitoring started"
+    fi
+    
+    # Start emergency condition monitoring
+    if [ -f "scripts/security/emergency_stop.sh" ]; then
+        info "Starting emergency monitoring..."
+        nohup scripts/security/emergency_stop.sh monitor > logs/emergency_monitor.log 2>&1 &
+        echo $! > logs/emergency_monitor.pid
+        success "Emergency monitoring started"
+    fi
+    
+    # Schedule automated backups
+    if [ -f "scripts/security/backup_system.sh" ]; then
+        info "Scheduling automated backups..."
+        scripts/security/backup_system.sh schedule
+        success "Automated backups scheduled"
+    fi
+    
+    success "Monitoring and alerting setup completed"
+}
+
+# Display deployment summary
+show_deployment_summary() {
+    echo ""
+    echo -e "${PURPLE}================================================================${NC}"
+    echo -e "${PURPLE}🎉 ELITE ALPHA MIRROR BOT - DEPLOYMENT COMPLETE${NC}"
+    echo -e "${PURPLE}================================================================${NC}"
+    echo ""
+    
+    # Get deployment info
+    DEPLOYMENT_TIME=$(date)
+    PAPER_TRADING=$(grep "PAPER_TRADING_MODE" .env | cut -d= -f2)
+    STARTING_CAPITAL=$(grep "STARTING_CAPITAL" .env | cut -d= -f2)
+    MAX_CAPITAL=$(grep "MAX_CAPITAL" .env | cut -d= -f2)
+    
+    echo -e "${GREEN}📊 Deployment Summary:${NC}"
+    echo "  • Deployment Time: $DEPLOYMENT_TIME"
+    echo "  • Paper Trading: $PAPER_TRADING"
+    echo "  • Starting Capital: \$$STARTING_CAPITAL"
+    echo "  • Maximum Capital: \$$MAX_CAPITAL"
+    echo ""
+    
+    echo -e "${GREEN}🌐 Access URLs:${NC}"
+    echo "  • Application Health: http://localhost:8080/health"
+    echo "  • Metrics: http://localhost:8081/metrics"
+    echo "  • Grafana Dashboard: http://localhost:3000"
+    echo "  • Prometheus: http://localhost:9090"
+    echo ""
+    
+    echo -e "${GREEN}🔧 Management Commands:${NC}"
+    echo "  • View logs: docker-compose -f docker-compose.prod.yml logs -f elite-bot"
+    echo "  • Stop services: docker-compose -f docker-compose.prod.yml stop"
+    echo "  • Restart services: docker-compose -f docker-compose.prod.yml restart"
+    echo "  • Emergency stop: scripts/security/emergency_stop.sh stop"
+    echo "  • Health check: scripts/monitoring/health_check.sh"
+    echo "  • Create backup: scripts/security/backup_system.sh create"
+    echo ""
+    
+    echo -e "${GREEN}📋 Monitoring:${NC}"
+    echo "  • Security Monitor: logs/security_monitor.log"
+    echo "  • Emergency Monitor: logs/emergency_monitor.log"
+    echo "  • Application Logs: logs/production/"
+    echo "  • Deployment Log: $DEPLOYMENT_LOG"
+    echo ""
+    
+    if [ "$PAPER_TRADING" = "true" ]; then
+        echo -e "${GREEN}✅ PAPER TRADING MODE ACTIVE${NC}"
+        echo -e "${GREEN}   Safe for testing - no real money at risk${NC}"
+    else
+        echo -e "${RED}🚨 LIVE TRADING MODE ACTIVE${NC}"
+        echo -e "${RED}   Real money at risk - monitor carefully!${NC}"
+    fi
+    
+    echo ""
+    echo -e "${YELLOW}⚠️  Important Reminders:${NC}"
+    echo "  • Monitor all trades and system health regularly"
+    echo "  • Test emergency stop procedures"
+    echo "  • Backup system data regularly"
+    echo "  • Review security logs daily"
+    echo "  • Keep all credentials secure"
+    echo "  • Ensure compliance with local regulations"
+    echo ""
+    
+    log "Deployment summary displayed"
+}
+
+# Create initial backup
+create_initial_backup() {
+    echo -e "${BLUE}💾 Creating initial deployment backup...${NC}"
+    
+    if [ -f "scripts/security/backup_system.sh" ]; then
+        scripts/security/backup_system.sh create full
+        success "Initial backup created"
+    else
+        warning "Backup system not found, skipping initial backup"
+    fi
+}
+
+# Setup log rotation
+setup_log_rotation() {
+    echo -e "${BLUE}📝 Setting up log rotation...${NC}"
+    
+    cat > /tmp/elite-bot-logrotate << 'EOF'
+/app/logs/production/*.log {
+    daily
+    missingok
+    rotate 30
+    compress
+    delaycompress
+    notifempty
+    create 644 elitebot elitebot
+    postrotate
+        docker-compose -f docker-compose.prod.yml restart elite-bot > /dev/null 2>&1 || true
+    endscript
+}
+
+/app/logs/security/*.log {
+    daily
+    missingok
+    rotate 90
+    compress
+    delaycompress
+    notifempty
+    create 644 elitebot elitebot
+}
 EOF
 
-cat > core/websocket_engine.py << 'EOF'
-import asyncio
-import websockets
-import aiohttp
-import json
-import time
-from datetime import datetime
-from typing import Dict, Set, List
-from dataclasses import dataclass
-import logging
+    if [ -d "/etc/logrotate.d" ]; then
+        sudo cp /tmp/elite-bot-logrotate /etc/logrotate.d/elite-bot
+        success "Log rotation configured"
+    else
+        warning "Logrotate not available, manual log management required"
+    fi
+    
+    rm -f /tmp/elite-bot-logrotate
+}
 
-@dataclass
-class LiveTrade:
-    whale_wallet: str
-    token_address: str
-    amount_eth: float
-    gas_price: int
-    timestamp: float
-    tx_hash: str
-    confidence: float
+# Cleanup function
+cleanup_deployment() {
+    echo -e "${BLUE}🧹 Cleaning up deployment artifacts...${NC}"
+    
+    # Remove temporary files
+    rm -f .env
+    
+    # Clean up Docker build cache
+    docker system prune -f > /dev/null 2>&1 || true
+    
+    success "Cleanup completed"
+}
 
-class WebSocketEngine:
-    def __init__(self):
-        self.session = None
-        self.elite_wallets = set()
-        self.pending_trades = asyncio.Queue(maxsize=10000)
-        self.stats = {'processed': 0, 'detected': 0, 'executed': 0}
-        self.ml_brain = None
-        
-    async def __aenter__(self):
-        self.session = aiohttp.ClientSession()
-        from ml_brain import MLBrain
-        self.ml_brain = MLBrain()
-        await self.ml_brain.__aenter__()
-        await self.load_elite_wallets()
-        return self
-        
-    async def __aexit__(self, *args):
-        if self.ml_brain:
-            await self.ml_brain.__aexit__()
-        if self.session:
-            await self.session.close()
+# Rollback function
+rollback_deployment() {
+    echo -e "${YELLOW}🔄 Rolling back deployment...${NC}"
     
-    async def load_elite_wallets(self):
-        try:
-            with open('data/elite_wallets.json', 'r') as f:
-                wallets = json.load(f)
-                self.elite_wallets = {w['address'].lower() for w in wallets}
-        except:
-            self.elite_wallets = {
-                '0xae2fc483527b8ef99eb5d9b44875f005ba1fae13',
-                '0x6cc5f688a315f3dc28a7781717a9a798a59fda7b'
-            }
+    # Stop all services
+    docker-compose -f docker-compose.prod.yml down
     
-    async def start_realtime_monitoring(self):
-        tasks = [
-            self.websocket_listener(),
-            self.trade_processor(),
-            self.performance_monitor()
-        ]
-        await asyncio.gather(*tasks)
+    # Remove containers
+    docker-compose -f docker-compose.prod.yml rm -f
     
-    async def websocket_listener(self):
-        ws_url = "wss://eth-mainnet.ws.alchemyapi.io/v2/alcht_oZ7wU7JpIoZejlOWUcMFOpNsIlLDsX"
-        
-        while True:
-            try:
-                async with websockets.connect(ws_url) as ws:
-                    await ws.send(json.dumps({
-                        "id": 1,
-                        "method": "eth_subscribe", 
-                        "params": ["newPendingTransactions"]
-                    }))
-                    
-                    async for message in ws:
-                        await self.process_transaction(json.loads(message))
-            except Exception as e:
-                await asyncio.sleep(1)
+    warning "Deployment rolled back"
     
-    async def process_transaction(self, data):
-        if 'params' not in data or 'result' not in data['params']:
-            return
-            
-        tx_hash = data['params']['result']
-        tx_data = await self.get_transaction_data(tx_hash)
-        
-        if not tx_data:
-            return
-            
-        self.stats['processed'] += 1
-        
-        from_addr = tx_data.get('from', '').lower()
-        if from_addr in self.elite_wallets:
-            trade = await self.analyze_elite_transaction(tx_data)
-            if trade:
-                await self.pending_trades.put(trade)
-                self.stats['detected'] += 1
-    
-    async def get_transaction_data(self, tx_hash):
-        try:
-            url = "https://eth-mainnet.alchemyapi.io/v2/alcht_oZ7wU7JpIoZejlOWUcMFOpNsIlLDsX"
-            payload = {
-                "jsonrpc": "2.0",
-                "method": "eth_getTransactionByHash",
-                "params": [tx_hash],
-                "id": 1
-            }
-            async with self.session.post(url, json=payload) as response:
-                result = await response.json()
-                return result.get('result')
-        except:
-            return None
-    
-    async def analyze_elite_transaction(self, tx_data):
-        to_addr = tx_data.get('to', '').lower()
-        input_data = tx_data.get('input', '')
-        value = int(tx_data.get('value', '0x0'), 16)
-        
-        dex_routers = {
-            '0x7a250d5630b4cf539739df2c5dacb4c659f2488d',
-            '0xe592427a0aece92de3edee1f18e0157c05861564',
-            '0x1111111254eeb25477b68fb85ed929f73a960582'
-        }
-        
-        if to_addr in dex_routers and value > 0:
-            token_address = self.extract_token_from_input(input_data)
-            if token_address:
-                return LiveTrade(
-                    whale_wallet=tx_data['from'],
-                    token_address=token_address,
-                    amount_eth=value / 1e18,
-                    gas_price=int(tx_data.get('gasPrice', '0x0'), 16),
-                    timestamp=time.time(),
-                    tx_hash=tx_data.get('hash', ''),
-                    confidence=0.8
-                )
-        return None
-    
-    def extract_token_from_input(self, input_data):
-        if len(input_data) < 200:
-            return None
-        try:
-            return '0x' + input_data[138:178]
-        except:
-            return None
-    
-    async def trade_processor(self):
-        while True:
-            try:
-                trade = await self.pending_trades.get()
-                await self.execute_trade_simulation(trade)
-                self.stats['executed'] += 1
-            except Exception as e:
-                await asyncio.sleep(0.01)
-    
-    async def execute_trade_simulation(self, trade):
-        signal = await self.ml_brain.generate_trade_signal(
-            trade.token_address, 
-            0.001, 
-            1000000, 
-            {'volatility': 0.05, 'volume_24h': 500000}
-        )
-        
-        position_size = min(trade.amount_eth * 1000, 500)
-        
-        print(f"⚡ LIVE TRADE SIMULATION")
-        print(f"   Whale: {trade.whale_wallet[:12]}...")
-        print(f"   Token: {trade.token_address[:12]}...")
-        print(f"   Position: ${position_size:.0f}")
-        print(f"   ML Score: {signal.ml_score:.3f}")
-        print(f"   Confidence: {signal.confidence:.3f}")
-        print(f"   Action: {signal.action}")
-        print(f"   Timestamp: {datetime.now().strftime('%H:%M:%S.%f')[:-3]}")
-        print()
-    
-    async def performance_monitor(self):
-        start_time = time.time()
-        while True:
-            await asyncio.sleep(30)
-            runtime = time.time() - start_time
-            tps = self.stats['processed'] / max(runtime, 1)
-            
-            print(f"📊 PERFORMANCE: {runtime:.0f}s | TPS: {tps:.1f} | Detected: {self.stats['detected']} | Executed: {self.stats['executed']}")
-EOF
+    exit 1
+}
 
-cat > core/realtime_coordinator.py << 'EOF'
-import asyncio
-import time
-import signal
-import sys
-from datetime import datetime
+# Signal handlers
+trap rollback_deployment ERR
+trap 'echo "Deployment interrupted by user"; rollback_deployment' INT TERM
 
-class RealtimeCoordinator:
-    def __init__(self):
-        self.is_running = False
-        self.start_time = time.time()
-        self.capital = 1000.0
-        self.positions = {}
-        
-    async def startup(self):
-        print("⚡ ULTRA-FAST REAL-TIME TRADING SYSTEM")
-        print("🧠 Mac M1 ML-Enhanced Elite Wallet Mirroring")
-        print("🚀 WebSocket-First Architecture")
-        print("=" * 60)
-        print(f"💰 Starting Capital: ${self.capital:,.2f}")
-        print(f"🎯 Target: $1,000,000 (1000x)")
-        print(f"⚡ Mode: Real-time simulation with live data")
-        print("=" * 60)
-        
-        signal.signal(signal.SIGINT, self.signal_handler)
-        self.is_running = True
-        
-        from websocket_engine import WebSocketEngine
-        
-        async with WebSocketEngine() as engine:
-            await engine.start_realtime_monitoring()
+# Main deployment function
+main() {
+    echo -e "${BLUE}Starting production deployment process...${NC}"
     
-    def signal_handler(self, signum, frame):
-        print(f"\n🛑 Shutdown signal received")
-        self.is_running = False
-        sys.exit(0)
+    # Create logs directory
+    mkdir -p logs
+    
+    log "Production deployment started by $(whoami) at $(date)"
+    
+    # Run deployment steps
+    pre_deployment_checks
+    build_production_images
+    setup_production_database
+    deploy_production_services
+    wait_for_health_checks
+    run_post_deployment_tests
+    setup_monitoring
+    create_initial_backup
+    setup_log_rotation
+    cleanup_deployment
+    
+    # Show final summary
+    show_deployment_summary
+    
+    log "Production deployment completed successfully"
+    
+    success "🎉 Production deployment completed successfully!"
+}
 
-async def main():
-    coordinator = RealtimeCoordinator()
-    await coordinator.startup()
-
-if __name__ == "__main__":
-    asyncio.run(main())
-EOF
-
-cat > start_ultrafast.sh << 'STARTEOF'
-#!/bin/bash
-set -e
-
-echo "⚡ STARTING ULTRA-FAST REAL-TIME SYSTEM"
-echo "======================================"
-
-export $(cat .env | grep -v '^#' | xargs)
-
-echo "🧠 Initializing Mac M1 ML Brain..."
-echo "⚡ Starting WebSocket monitoring..."
-echo "🚀 Real-time execution simulation active"
+# Pre-flight safety confirmation
+echo ""
+echo -e "${YELLOW}🚨 PRODUCTION DEPLOYMENT SAFETY CONFIRMATION${NC}"
+echo "=============================================="
+echo ""
+echo "This script will deploy the Elite Alpha Mirror Bot to production."
+echo ""
+echo -e "${RED}⚠️  WARNINGS:${NC}"
+echo "• This system involves real financial trading"
+echo "• Real money may be at risk"
+echo "• Ensure all configurations are correct"
+echo "• Have emergency procedures ready"
+echo ""
+echo -e "${GREEN}✅ SAFETY MEASURES:${NC}"
+echo "• Paper trading mode available for testing"
+echo "• Risk management limits configured"
+echo "• Emergency stop mechanisms in place"
+echo "• Comprehensive monitoring and alerting"
+echo "• Encrypted backups and audit logs"
 echo ""
 
-cd core
-python realtime_coordinator.py
-STARTEOF
+# Final confirmation
+read -p "Do you want to proceed with production deployment? (y/N): " -n 1 -r
+echo
+if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    echo "Deployment cancelled by user."
+    exit 0
+fi
 
-chmod +x start_ultrafast.sh
-
-cat > core/data_collector.py << 'EOF'
-import asyncio
-import aiohttp
-import json
-import sqlite3
-import time
-from datetime import datetime, timedelta
-
-class DataCollector:
-    def __init__(self):
-        self.session = None
-        self.db_path = 'data/crypto_history.db'
-        
-    async def __aenter__(self):
-        self.session = aiohttp.ClientSession()
-        self.init_db()
-        return self
-        
-    async def __aexit__(self, *args):
-        if self.session:
-            await self.session.close()
-    
-    def init_db(self):
-        conn = sqlite3.connect(self.db_path)
-        conn.execute('''CREATE TABLE IF NOT EXISTS historical_trades 
-                       (timestamp INTEGER, token TEXT, price REAL, volume REAL, 
-                        whale_wallet TEXT, trade_type TEXT, success INTEGER)''')
-        conn.commit()
-        conn.close()
-    
-    async def collect_realtime_data(self):
-        while True:
-            try:
-                url = "https://api.coingecko.com/api/v3/coins/markets"
-                params = {'vs_currency': 'usd', 'order': 'market_cap_desc', 'per_page': 10}
-                async with self.session.get(url, params=params) as response:
-                    if response.status == 200:
-                        data = await response.json()
-                        await self.store_data(data)
-            except:
-                pass
-            await asyncio.sleep(60)
-    
-    async def store_data(self, data):
-        conn = sqlite3.connect(self.db_path)
-        for coin in data:
-            conn.execute('''INSERT INTO historical_trades VALUES (?, ?, ?, ?, ?, ?, ?)''',
-                        (int(time.time()), coin['id'], coin['current_price'], 
-                         coin['total_volume'], 'system', 'data_collection', 1))
-        conn.commit()
-        conn.close()
-EOF
-
-mkdir -p data
-
-echo "✅ Ultra-fast real-time system created!"
 echo ""
-echo "🚀 Features implemented:"
-echo "  ⚡ WebSocket-first architecture for maximum speed"
-echo "  🧠 Mac M1 ML brain with LSTM + Attention"
-echo "  📊 Real-time trade simulation with live data"
-echo "  🎯 Elite wallet monitoring via Alchemy WebSocket"
-echo "  📈 Historical data collection and learning"
-echo "  ⚡ Sub-second execution simulation"
+read -p "Have you reviewed all configuration files and API keys? (y/N): " -n 1 -r
+echo
+if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    echo "Please review all configurations before deployment."
+    exit 0
+fi
+
 echo ""
-echo "🚀 START THE SYSTEM:"
-echo "   ./start_ultrafast.sh"
+echo -e "${GREEN}🚀 Starting deployment...${NC}"
 echo ""
-echo "📊 This will:"
-echo "  - Connect to live Ethereum mempool"
-echo "  - Monitor elite wallets in real-time"
-echo "  - Use ML to predict trade outcomes"
-echo "  - Execute simulated trades with live data"
-echo "  - Learn from historical crypto patterns"
+
+# Execute main deployment
+main

@@ -1,0 +1,40 @@
+# Production Monitoring Configuration
+monitoring:
+  # Health Checks
+  health_checks:
+    interval_seconds: 30
+    timeout_seconds: 10
+    endpoints:
+      - "/health"
+      - "/metrics"
+      - "/status"
+      
+  # Metrics Collection
+  metrics:
+    enabled: true
+    port: 8081
+    path: "/metrics"
+    collect_system_metrics: true
+    collect_trading_metrics: true
+    
+  # Alerting Thresholds
+  alerts:
+    cpu_threshold: 80
+    memory_threshold: 85
+    disk_threshold: 90
+    error_rate_threshold: 0.05
+    response_time_threshold: 5000  # milliseconds
+    
+  # Log Levels
+  logging:
+    root_level: INFO
+    trading_level: INFO
+    api_level: WARNING
+    security_level: DEBUG
+    
+  # Data Retention
+  retention:
+    logs_days: 30
+    metrics_days: 90
+    trades_days: 365
+    audit_days: 2555  # 7 years
