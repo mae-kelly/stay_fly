@@ -53,7 +53,7 @@ help:
 # Setup and Installation
 setup: install build config
 	@echo "✅ Production setup complete!"
-	@echo "Edit config.env with your API keys, then run: make run"
+	@echo "Edit .env with your API keys, then run: make run"
 
 install:
 	@echo "📦 Installing dependencies..."
@@ -73,12 +73,12 @@ build:
 
 config:
 	@echo "⚙️ Setting up configuration..."
-	@if [ ! -f "config.env" ]; then \
-		cp config.env.example config.env; \
-		echo "📝 Created config.env from template"; \
-		echo "⚠️ Please edit config.env with your API keys!"; \
+	@if [ ! -f ".env" ]; then \
+		cp .env.example .env; \
+		echo "📝 Created .env from template"; \
+		echo "⚠️ Please edit .env with your API keys!"; \
 	else \
-		echo "✅ config.env already exists"; \
+		echo "✅ .env already exists"; \
 	fi
 	@mkdir -p data/{backups,tokens,trades,wallets} logs/{errors,performance,trades}
 
@@ -269,6 +269,6 @@ emergency-stop:
 emergency-backup:
 	@echo "🚨 EMERGENCY BACKUP..."
 	@timestamp=$(date +%Y%m%d_%H%M%S); \
-	tar -czf "emergency_backup_$timestamp.tar.gz" data/ config.env logs/ || true
+	tar -czf "emergency_backup_$timestamp.tar.gz" data/ .env logs/ || true
 	@echo "✅ Emergency backup created"
 	@echo "

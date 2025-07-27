@@ -32,7 +32,7 @@ chmod +x production_setup.sh
 ### 2. Configure APIs
 ```bash
 # Edit with your API keys
-nano config.env
+nano .env
 
 # Required:
 OKX_API_KEY=your_okx_api_key
@@ -145,7 +145,7 @@ The bot automatically celebrates:
 make check
 
 # Verify configuration  
-grep "your_.*_here" config.env
+grep "your_.*_here" .env
 
 # Check logs
 make logs
@@ -197,7 +197,7 @@ nano data/custom_elite_wallets.json
 
 ### Performance Tuning
 ```bash
-# Adjust in config.env
+# Adjust in .env
 MAX_POSITION_SIZE=0.25  # 25% instead of 30%
 MIN_LIQUIDITY=100000    # Higher liquidity requirement
 PRIORITY_GAS_BOOST=5000000000  # +5 gwei for faster execution

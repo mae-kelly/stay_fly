@@ -1,5 +1,5 @@
 # Elite Alpha Mirror Bot - Webhook Configuration Examples
-# Copy this to webhook_config.env and customize your URLs
+# Copy this to webhook_.env and customize your URLs
 
 # =============================================================================
 # WEBHOOK DATA SOURCES (Instead of APIs)

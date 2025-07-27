@@ -8,8 +8,8 @@ fi
 
 source venv/bin/activate
 
-if [ -f config.env ]; then
-    export $(cat config.env | xargs)
+if [ -f .env ]; then
+    export $(cat .env | xargs)
 fi
 
 echo "🧠 Starting Elite Alpha Mirror Bot..."

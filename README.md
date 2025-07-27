@@ -73,8 +73,8 @@ pip install -r requirements.txt
 
 ### 2. Configuration
 ```bash
-cp config.env.example config.env
-# Edit config.env with your API keys
+cp .env.example .env
+# Edit .env with your API keys
 ```
 
 Required API keys:
@@ -192,7 +192,7 @@ curl http://localhost:8080/metrics
 ```bash
 docker build -t elite-bot .
 docker run -d --name elite-bot \
-  --env-file config.env \
+  --env-file .env \
   -p 8080:8080 \
   elite-bot
 ```

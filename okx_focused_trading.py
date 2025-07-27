@@ -20,16 +20,16 @@ from typing import Dict, List, Optional
 
 # Load configuration
 def load_config():
-    """Load configuration from config.env"""
+    """Load configuration from .env"""
     config = {}
     try:
-        with open("config.env", "r") as f:
+        with open(".env", "r") as f:
             for line in f:
                 if "=" in line and not line.startswith("#"):
                     key, value = line.strip().split("=", 1)
                     config[key] = value
     except FileNotFoundError:
-        print("❌ config.env not found")
+        print("❌ .env not found")
     return config
 
 

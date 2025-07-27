@@ -7,14 +7,14 @@ services:
     container_name: elite-alpha-bot
     restart: unless-stopped
     env_file:
-      - config.env
+      - .env
     ports:
       - "8080:8080"  # Health check endpoint
       - "8081:8081"  # Metrics endpoint
     volumes:
       - ./data:/app/data
       - ./logs:/app/logs
-      - ./config.env:/app/config.env:ro
+      - ./.env:/app/.env:ro
     networks:
       - elite-network
     healthcheck:

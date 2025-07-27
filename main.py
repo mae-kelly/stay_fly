@@ -51,20 +51,20 @@ def check_dependencies():
 
 def check_configuration():
     """Check if configuration is properly set up"""
-    config_file = Path("config.env")
+    config_file = Path(".env")
     if not config_file.exists():
-        print("❌ config.env not found")
-        print("Run: cp config.env.example config.env")
-        print("Then edit config.env with your API keys")
+        print("❌ .env not found")
+        print("Run: cp .env.example .env")
+        print("Then edit .env with your API keys")
         return False
     
     # Check for placeholder values
     with open(config_file) as f:
         content = f.read()
         if "your_okx_api_key_here" in content:
-            print("⚠️ Please update config.env with your actual OKX API credentials")
+            print("⚠️ Please update .env with your actual OKX API credentials")
         if "YOUR_API_KEY" in content:
-            print("⚠️ Please update config.env with your actual API endpoints")
+            print("⚠️ Please update .env with your actual API endpoints")
     
     return True
 

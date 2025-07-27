@@ -2,60 +2,49 @@
   {
     "address": "0xae2fc483527b8ef99eb5d9b44875f005ba1fae13",
     "type": "deployer",
-    "avg_multiplier": 245.7,
-    "confidence_score": 0.96,
-    "source": "known_legend",
-    "description": "Legendary deployer - 20+ moonshots"
+    "tokens_created": 2,
+    "successful_tokens": 1,
+    "total_volume": 26352.239999999998,
+    "avg_multiplier": 13.36475,
+    "max_multiplier": 25.0,
+    "success_rate": 0.5,
+    "last_activity": "2025-07-26T08:52:59.596077",
+    "confidence_score": 0.5172950000000001
+  },
+  {
+    "address": "0x123456789abcdef123456789abcdef123456789a",
+    "type": "deployer",
+    "tokens_created": 1,
+    "successful_tokens": 1,
+    "total_volume": 6534.62,
+    "avg_multiplier": 40.0,
+    "max_multiplier": 40.0,
+    "success_rate": 1.0,
+    "last_activity": "2025-06-27T08:53:05.956324",
+    "confidence_score": 0.95
   },
   {
     "address": "0x6cc5f688a315f3dc28a7781717a9a798a59fda7b",
     "type": "sniper",
-    "avg_multiplier": 189.3,
-    "confidence_score": 0.94,
-    "source": "known_legend",
-    "description": "Ultra-fast execution specialist"
+    "tokens_created": 0,
+    "successful_tokens": 8,
+    "total_volume": 25000000,
+    "avg_multiplier": 45.2,
+    "max_multiplier": 120.0,
+    "success_rate": 0.72,
+    "last_activity": "2025-07-27T08:53:07.028110",
+    "confidence_score": 0.88
   },
   {
     "address": "0x742d35cc6b6e2e65a3e7c2c6c6e5e6e5e6e5e6e5",
     "type": "deployer",
-    "avg_multiplier": 156.8,
-    "confidence_score": 0.91,
-    "source": "known_legend",
-    "description": "Memecoin deployment master"
-  },
-  {
-    "address": "0x987654321fedcba987654321fedcba987654321f",
-    "type": "sniper",
-    "avg_multiplier": 75.0,
-    "confidence_score": 0.85,
-    "source": "coingecko_trending",
-    "token_symbol": "ZORA",
-    "discovery_time": "2025-07-27T07:43:00.294699"
-  },
-  {
-    "address": "0x1111111254eeb25477b68fb85ed929f73a960582",
-    "type": "sniper",
-    "avg_multiplier": 75.0,
-    "confidence_score": 0.85,
-    "source": "coingecko_trending",
-    "token_symbol": "DOLO",
-    "discovery_time": "2025-07-27T07:43:00.294760"
-  },
-  {
-    "address": "0xdef1c0ded9bec7f1a1670819833240f027b25eff",
-    "type": "sniper",
-    "avg_multiplier": 75.0,
-    "confidence_score": 0.85,
-    "source": "coingecko_trending",
-    "token_symbol": "ENA",
-    "discovery_time": "2025-07-27T07:43:00.294772"
-  },
-  {
-    "address": "0x123456789abcdef123456789abcdef123456789a",
-    "type": "whale_trader",
-    "avg_multiplier": 95.0,
-    "confidence_score": 0.8,
-    "source": "whale_activity",
-    "discovery_time": "2025-07-27T07:43:00.294980"
+    "tokens_created": 8,
+    "successful_tokens": 5,
+    "total_volume": 15000000,
+    "avg_multiplier": 32.1,
+    "max_multiplier": 75.0,
+    "success_rate": 0.625,
+    "last_activity": "2025-07-27T08:53:07.028114",
+    "confidence_score": 0.78
   }
 ]

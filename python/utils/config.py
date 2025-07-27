@@ -28,7 +28,7 @@ class APIConfig:
     discord_webhook: str = ""
 
 
-def load_config(config_path: str = "config.env") -> Dict[str, str]:
+def load_config(config_path: str = ".env") -> Dict[str, str]:
     """Load configuration from environment file"""
     config = {}
 

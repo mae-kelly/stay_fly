@@ -62,8 +62,8 @@ spec:
         - name: logs-volume
           mountPath: /app/logs
         - name: config-volume
-          mountPath: /app/config.env
-          subPath: config.env
+          mountPath: /app/.env
+          subPath: .env
           readOnly: true
         resources:
           requests:

@@ -120,27 +120,27 @@ log_success "Directories created"
 
 # Set up configuration
 log_info "Setting up configuration..."
-if [ ! -f "config.env" ]; then
-    if [ -f "config.env.example" ]; then
-        cp config.env.example config.env
-        log_warning "Created config.env from template. Please edit it with your API keys!"
+if [ ! -f ".env" ]; then
+    if [ -f ".env.example" ]; then
+        cp .env.example .env
+        log_warning "Created .env from template. Please edit it with your API keys!"
         log_warning "IMPORTANT: Add your OKX API credentials before running the bot"
     else
-        log_error "config.env.example not found"
+        log_error ".env.example not found"
         exit 1
     fi
 else
-    log_info "config.env already exists"
+    log_info ".env already exists"
 fi
 
 # Validate configuration
 log_info "Validating configuration..."
-if grep -q "your_okx_api_key_here" config.env; then
-    log_warning "Please update config.env with your actual OKX API credentials"
+if grep -q "your_okx_api_key_here" .env; then
+    log_warning "Please update .env with your actual OKX API credentials"
 fi
 
-if grep -q "YOUR_API_KEY" config.env; then
-    log_warning "Please update config.env with your actual Ethereum RPC endpoints"
+if grep -q "YOUR_API_KEY" .env; then
+    log_warning "Please update .env with your actual Ethereum RPC endpoints"
 fi
 
 # Set up Git hooks (if this is a git repository)
@@ -209,7 +209,7 @@ log_info "To install: sudo mv elite-bot-logrotate /etc/logrotate.d/"
 
 # Set file permissions
 log_info "Setting secure file permissions..."
-chmod 600 config.env
+chmod 600 .env
 chmod -R 755 scripts/
 chmod -R 700 data/
 chmod -R 755 logs/
@@ -311,7 +311,7 @@ tar -czf "$BACKUP_DIR/$BACKUP_FILE" \
     data/real_elite_wallets.json \
     data/discovery_summary.json \
     data/*.db \
-    config.env.backup 2>/dev/null || true
+    .env.backup 2>/dev/null || true
 
 # Keep only last 30 backups
 find "$BACKUP_DIR" -name "elite_bot_backup_*.tar.gz" -mtime +30 -delete
@@ -332,13 +332,13 @@ log_info "Performing final security check..."
 # Check for default passwords/keys
 SECURITY_ISSUES=0
 
-if grep -q "your_.*_here" config.env 2>/dev/null; then
-    log_warning "Default API keys detected in config.env"
+if grep -q "your_.*_here" .env 2>/dev/null; then
+    log_warning "Default API keys detected in .env"
     SECURITY_ISSUES=$((SECURITY_ISSUES + 1))
 fi
 
-if [ -f "config.env" ] && [ "$(stat -c %a config.env)" != "600" ]; then
-    log_warning "config.env permissions should be 600"
+if [ -f ".env" ] && [ "$(stat -c %a .env)" != "600" ]; then
+    log_warning ".env permissions should be 600"
     SECURITY_ISSUES=$((SECURITY_ISSUES + 1))
 fi
 
@@ -354,7 +354,7 @@ echo "🎉 Setup Complete!"
 echo "=================="
 echo ""
 echo "Next steps:"
-echo "1. Edit config.env with your API keys:"
+echo "1. Edit .env with your API keys:"
 echo "   - OKX API credentials"
 echo "   - Ethereum RPC endpoints"
 echo "   - Discord webhook URL"
