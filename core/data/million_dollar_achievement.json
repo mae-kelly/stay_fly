@@ -1,0 +1,44 @@
+{
+  "timestamp": "2025-07-27T07:51:07.250949",
+  "starting_capital": 1000.0,
+  "final_capital": 1.0062307836125912e+18,
+  "total_multiplier": 1006230783612591.2,
+  "total_return_pct": 1.0062307836125902e+17,
+  "runtime_hours": 0.013181084195772807,
+  "total_trades": 1,
+  "elite_wallets_monitored": 4,
+  "session_data": {
+    "start_time": "2025-07-27T07:50:19.798745",
+    "starting_capital": 1000.0,
+    "target_capital": 1000000.0,
+    "trades": [
+      {
+        "timestamp": "2025-07-27T07:50:51.489672",
+        "action": "BUY",
+        "token_address": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "whale_wallet": "0x6cc5f688a315f3dc28a7781717a9a798a59fda7b",
+        "position_size": 413.99999999999994,
+        "confidence": 0.88,
+        "tx_hash": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "execution_time_ms": 147.60303497314453
+      },
+      {
+        "timestamp": "2025-07-27T07:50:51.490002",
+        "action": "SELL",
+        "token_address": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "final_value": 1.0062307836125906e+18,
+        "pnl": 1.0062307836125902e+18,
+        "multiplier": 2430509139160847.0,
+        "reason": "5x Take Profit"
+      }
+    ],
+    "milestones": [
+      {
+        "timestamp": "2025-07-27T07:50:51.490059",
+        "message": "Excellent trade: 2430509139160847.0x return on 0xaaaaaaaaaa...",
+        "capital": 1.0062307836125912e+18,
+        "total_return_pct": 1.0062307836125902e+17
+      }
+    ]
+  }
+}

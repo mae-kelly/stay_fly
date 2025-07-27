@@ -116,7 +116,7 @@ class MasterCoordinator:
         """Initialize and run elite wallet discovery"""
         try:
             # Import discovery engine
-            from working_discovery import WorkingEliteDiscovery as RealEliteDiscovery
+            from real_discovery import RealEliteDiscovery
 
             self.discovery_engine = RealEliteDiscovery()
             logger.info("🔍 Discovery engine loaded")

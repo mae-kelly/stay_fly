@@ -1,0 +1,124 @@
+# Elite Alpha Mirror Bot - Webhook Configuration Examples
+# Copy this to webhook_config.env and customize your URLs
+
+# =============================================================================
+# WEBHOOK DATA SOURCES (Instead of APIs)
+# =============================================================================
+
+# Token Discovery Webhooks
+DEXSCREENER_WEBHOOK="https://your-webhook-service.com/dexscreener/trending"
+TOKEN_DISCOVERY_WEBHOOK="https://your-webhook-service.com/tokens/moonshots"
+COINGECKO_WEBHOOK="https://your-webhook-service.com/coingecko/trending"
+
+# Whale Activity Webhooks  
+WHALE_ACTIVITY_WEBHOOK="https://your-webhook-service.com/whales/transactions"
+MEMPOOL_WEBHOOK="https://your-webhook-service.com/mempool/elite-txs"
+DEPLOYER_WEBHOOK="https://your-webhook-service.com/deployers/new-tokens"
+
+# Price & Market Data Webhooks
+PRICE_FEED_WEBHOOK="https://your-webhook-service.com/prices/realtime"
+LIQUIDITY_WEBHOOK="https://your-webhook-service.com/liquidity/updates"
+VOLUME_WEBHOOK="https://your-webhook-service.com/volume/spikes"
+
+# =============================================================================
+# POPULAR WEBHOOK SERVICES YOU CAN USE
+# =============================================================================
+
+# Option 1: Webhook.site (Free testing)
+# DEXSCREENER_WEBHOOK="https://webhook.site/your-unique-id"
+
+# Option 2: Discord Webhooks (Free)
+# TOKEN_DISCOVERY_WEBHOOK="https://discord.com/api/webhooks/your-webhook-id/token"
+
+# Option 3: Zapier Webhooks (Freemium)
+# WHALE_ACTIVITY_WEBHOOK="https://hooks.zapier.com/hooks/catch/your-id/"
+
+# Option 4: IFTTT Webhooks (Free)
+# PRICE_FEED_WEBHOOK="https://maker.ifttt.com/trigger/event/with/key/your-key"
+
+# Option 5: Custom HTTP endpoints
+# MEMPOOL_WEBHOOK="https://your-api.herokuapp.com/webhook/mempool"
+
+# =============================================================================
+# WEBHOOK DATA FORMATS EXPECTED
+# =============================================================================
+
+# Token Discovery Webhook Response Format:
+# {
+#   "tokens": [
+#     {
+#       "address": "0xTokenAddress",
+#       "deployer": "0xDeployerAddress", 
+#       "multiplier": 150.5,
+#       "created_at": "2024-01-01T00:00:00Z"
+#     }
+#   ]
+# }
+
+# Whale Activity Webhook Response Format:
+# {
+#   "transactions": [
+#     {
+#       "from": "0xWhaleAddress",
+#       "to": "0xTokenAddress",
+#       "value": "1000000000000000000",
+#       "hash": "0xTransactionHash"
+#     }
+#   ]
+# }
+
+# Elite Wallets Webhook Response Format:
+# {
+#   "wallets": [
+#     {
+#       "address": "0xEliteWallet",
+#       "type": "deployer",
+#       "performance": 250.0,
+#       "confidence": 0.95,
+#       "last_activity": "2024-01-01T00:00:00Z"
+#     }
+#   ]
+# }
+
+# =============================================================================
+# WEBHOOK AUTHENTICATION (Optional)
+# =============================================================================
+
+# API Keys for webhook services
+WEBHOOK_API_KEY="your-webhook-service-api-key"
+WEBHOOK_SECRET="your-webhook-secret-for-verification"
+
+# Basic Auth (if required)
+WEBHOOK_USERNAME="your-username"
+WEBHOOK_PASSWORD="your-password"
+
+# =============================================================================
+# WEBHOOK CONFIGURATION SETTINGS
+# =============================================================================
+
+# Enable/disable webhook usage
+USE_WEBHOOKS=true
+
+# Webhook timeout settings
+WEBHOOK_TIMEOUT=10
+WEBHOOK_RETRY_ATTEMPTS=3
+WEBHOOK_RETRY_DELAY=2
+
+# Fallback behavior when webhooks fail
+WEBHOOK_FALLBACK_TO_API=false
+WEBHOOK_FALLBACK_TO_DEMO=true
+
+# =============================================================================
+# EXAMPLE: SETTING UP A SIMPLE WEBHOOK ENDPOINT
+# =============================================================================
+
+# You can create a simple webhook receiver using tools like:
+# 1. https://webhook.site - Instant webhook URLs for testing
+# 2. https://ngrok.com - Tunnel to your local server  
+# 3. https://requestbin.com - Collect and inspect HTTP requests
+# 4. Your own Flask/Express server
+
+# Example webhook URL that returns token data:
+# DEXSCREENER_WEBHOOK="https://webhook.site/#!/view/your-unique-id"
+
+# The webhook should return JSON data in the expected format above
