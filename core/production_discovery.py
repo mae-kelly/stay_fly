@@ -1,6 +1,3 @@
-#!/bin/bash
-
-cat > core/production_discovery.py << 'EOF'
 import asyncio
 import aiohttp
 import json
@@ -318,6 +315,3 @@ class ProductionEliteDiscovery:
             json.dump(summary, f, indent=2)
         
         logging.info(f"Saved {len(wallets)} elite wallets")
-EOF
-
-echo "Production discovery engine created"

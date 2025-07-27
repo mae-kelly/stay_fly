@@ -2,25 +2,25 @@
   {
     "address": "0xae2fc483527b8ef99eb5d9b44875f005ba1fae13",
     "type": "deployer",
-    "tokens_created": 3,
+    "tokens_created": 2,
     "successful_tokens": 1,
-    "total_volume": 62389.56,
-    "avg_multiplier": 9.273666666666667,
+    "total_volume": 26329.48,
+    "avg_multiplier": 13.35765,
     "max_multiplier": 25.0,
-    "success_rate": 0.3333333333333333,
-    "last_activity": "2025-07-26T07:50:29.964188",
-    "confidence_score": 0.35214
+    "success_rate": 0.5,
+    "last_activity": "2025-07-26T08:23:51.769392",
+    "confidence_score": 0.517153
   },
   {
     "address": "0x123456789abcdef123456789abcdef123456789a",
     "type": "deployer",
     "tokens_created": 1,
     "successful_tokens": 1,
-    "total_volume": 5734.65,
+    "total_volume": 6572.51,
     "avg_multiplier": 40.0,
     "max_multiplier": 40.0,
     "success_rate": 1.0,
-    "last_activity": "2025-06-27T07:50:35.631670",
+    "last_activity": "2025-06-27T08:23:55.701238",
     "confidence_score": 0.95
   },
   {
@@ -32,7 +32,7 @@
     "avg_multiplier": 45.2,
     "max_multiplier": 120.0,
     "success_rate": 0.72,
-    "last_activity": "2025-07-27T07:50:36.721797",
+    "last_activity": "2025-07-27T08:23:56.824556",
     "confidence_score": 0.88
   },
   {
@@ -44,7 +44,7 @@
     "avg_multiplier": 32.1,
     "max_multiplier": 75.0,
     "success_rate": 0.625,
-    "last_activity": "2025-07-27T07:50:36.721802",
+    "last_activity": "2025-07-27T08:23:56.824560",
     "confidence_score": 0.78
   }
 ]
