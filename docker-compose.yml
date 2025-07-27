@@ -1,54 +1,252 @@
 version: '3.8'
 
 services:
+  # Main Elite Alpha Mirror Bot
   elite-bot:
     build: .
-    container_name: elite-alpha-mirror-bot
-    environment:
-      - NODE_ENV=production
-      - RUST_LOG=info
-      - PYTHONPATH=/app
+    container_name: elite-alpha-bot
+    restart: unless-stopped
     env_file:
-      - .env
+      - config.env
+    ports:
+      - "8080:8080"  # Health check endpoint
+      - "8081:8081"  # Metrics endpoint
     volumes:
       - ./data:/app/data
       - ./logs:/app/logs
-      - ./config:/app/config
-    restart: unless-stopped
+      - ./config.env:/app/config.env:ro
     networks:
-      - bot-network
+      - elite-network
     healthcheck:
-      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8080/health')"]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 60s
+      start_period: 40s
+    depends_on:
+      - redis
+      - prometheus
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
 
+  # Redis for caching and rate limiting
   redis:
     image: redis:7-alpine
-    container_name: elite-bot-redis
-    volumes:
-      - redis_data:/data
-    networks:
-      - bot-network
+    container_name: elite-redis
     restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - elite-network
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-elitebot2024}
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
+  # Prometheus for metrics collection
   prometheus:
     image: prom/prometheus:latest
-    container_name: elite-bot-prometheus
+    container_name: elite-prometheus
+    restart: unless-stopped
     ports:
       - "9090:9090"
     volumes:
-      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
-      - prometheus_data:/prometheus
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/alert_rules.yml:/etc/prometheus/alert_rules.yml:ro
+      - prometheus-data:/prometheus
     networks:
-      - bot-network
-    restart: unless-stopped
+      - elite-network
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=30d'
+      - '--web.enable-lifecycle'
+      - '--web.enable-admin-api'
 
-volumes:
-  redis_data:
-  prometheus_data:
+  # Grafana for visualization
+  grafana:
+    image: grafana/grafana:latest
+    container_name: elite-grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+    networks:
+      - elite-network
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-elitebot2024}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
+    depends_on:
+      - prometheus
+
+  # AlertManager for alerting
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: elite-alertmanager
+    restart: unless-stopped
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./monitoring/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - alertmanager-data:/alertmanager
+    networks:
+      - elite-network
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
+
+  # Node Exporter for system metrics
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: elite-node-exporter
+    restart: unless-stopped
+    ports:
+      - "9100:9100"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    networks:
+      - elite-network
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+
+  # PostgreSQL for data persistence (optional)
+  postgres:
+    image: postgres:15-alpine
+    container_name: elite-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./scripts/sql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - elite-network
+    environment:
+      - POSTGRES_DB=${DB_NAME:-elitebot}
+      - POSTGRES_USER=${DB_USER:-elitebot}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-elitebot2024}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-elitebot}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Nginx reverse proxy
+  nginx:
+    image: nginx:alpine
+    container_name: elite-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./monitoring/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./monitoring/nginx/ssl:/etc/nginx/ssl:ro
+    networks:
+      - elite-network
+    depends_on:
+      - elite-bot
+      - grafana
+
+  # ELK Stack for log management (optional)
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.10.0
+    container_name: elite-elasticsearch
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    networks:
+      - elite-network
+    ports:
+      - "9200:9200"
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.10.0
+    container_name: elite-kibana
+    restart: unless-stopped
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    networks:
+      - elite-network
+    depends_on:
+      - elasticsearch
+
+  # Log aggregation with Fluentd
+  fluentd:
+    build: ./monitoring/fluentd
+    container_name: elite-fluentd
+    restart: unless-stopped
+    volumes:
+      - ./logs:/fluentd/log
+      - ./monitoring/fluentd/fluent.conf:/fluentd/etc/fluent.conf:ro
+    networks:
+      - elite-network
+    depends_on:
+      - elasticsearch
+
+  # Backup service
+  backup:
+    image: alpine:latest
+    container_name: elite-backup
+    restart: "no"
+    volumes:
+      - ./data:/backup/data:ro
+      - ./backup_storage:/backup/storage
+      - ./scripts/backup.sh:/backup.sh:ro
+    networks:
+      - elite-network
+    command: ["/bin/sh", "/backup.sh"]
+    profiles:
+      - backup
 
 networks:
-  bot-network:
+  elite-network:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  redis-data:
+    driver: local
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local
+  alertmanager-data:
+    driver: local
+  postgres-data:
+    driver: local
+  elasticsearch-data:
+    driver: local
+
+# Health check for the entire stack
+x-healthcheck: &default-healthcheck
+  interval: 30s
+  timeout: 10s
+  retries: 3
+  start_period: 40s

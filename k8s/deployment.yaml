@@ -1,0 +1,361 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elite-alpha-bot
+  namespace: elite-trading
+  labels:
+    app: elite-alpha-bot
+    version: v2.0
+spec:
+  replicas: 1  # Single instance for trading bot
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: elite-alpha-bot
+  template:
+    metadata:
+      labels:
+        app: elite-alpha-bot
+        version: v2.0
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8081"
+        prometheus.io/path: "/metrics"
+    spec:
+      serviceAccountName: elite-bot-sa
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+      containers:
+      - name: elite-alpha-bot
+        image: elite-alpha-bot:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: health
+          protocol: TCP
+        - containerPort: 8081
+          name: metrics
+          protocol: TCP
+        env:
+        - name: ENVIRONMENT
+          value: "production"
+        - name: LOG_LEVEL
+          value: "INFO"
+        - name: HEALTH_CHECK_PORT
+          value: "8080"
+        - name: METRICS_PORT
+          value: "8081"
+        envFrom:
+        - secretRef:
+            name: elite-bot-secrets
+        - configMapRef:
+            name: elite-bot-config
+        volumeMounts:
+        - name: data-volume
+          mountPath: /app/data
+        - name: logs-volume
+          mountPath: /app/logs
+        - name: config-volume
+          mountPath: /app/config.env
+          subPath: config.env
+          readOnly: true
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: health
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: health
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "python -c 'import requests; requests.post(\"http://localhost:8080/shutdown\", timeout=30)'"]
+      - name: log-sidecar
+        image: fluent/fluent-bit:latest
+        volumeMounts:
+        - name: logs-volume
+          mountPath: /app/logs
+          readOnly: true
+        - name: fluent-bit-config
+          mountPath: /fluent-bit/etc/fluent-bit.conf
+          subPath: fluent-bit.conf
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+      volumes:
+      - name: data-volume
+        persistentVolumeClaim:
+          claimName: elite-bot-data-pvc
+      - name: logs-volume
+        emptyDir: {}
+      - name: config-volume
+        secret:
+          secretName: elite-bot-config
+          defaultMode: 0600
+      - name: fluent-bit-config
+        configMap:
+          name: fluent-bit-config
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 60
+      nodeSelector:
+        workload: trading
+      tolerations:
+      - key: "trading-workload"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - elite-alpha-bot
+              topologyKey: kubernetes.io/hostname
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elite-alpha-bot-service
+  namespace: elite-trading
+  labels:
+    app: elite-alpha-bot
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8081"
+    prometheus.io/path: "/metrics"
+spec:
+  type: ClusterIP
+  ports:
+  - name: health
+    port: 8080
+    targetPort: health
+    protocol: TCP
+  - name: metrics
+    port: 8081
+    targetPort: metrics
+    protocol: TCP
+  selector:
+    app: elite-alpha-bot
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: elite-bot-sa
+  namespace: elite-trading
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: elite-trading
+  name: elite-bot-role
+rules:
+- apiGroups: [""]
+  resources: ["pods", "services", "endpoints"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources: ["configmaps", "secrets"]
+  verbs: ["get", "list", "watch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: elite-bot-rolebinding
+  namespace: elite-trading
+subjects:
+- kind: ServiceAccount
+  name: elite-bot-sa
+  namespace: elite-trading
+roleRef:
+  kind: Role
+  name: elite-bot-role
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: elite-bot-config
+  namespace: elite-trading
+data:
+  # Non-sensitive configuration
+  MAX_POSITIONS: "5"
+  MAX_POSITION_SIZE: "0.30"
+  MIN_LIQUIDITY: "50000.0"
+  SLIPPAGE_TOLERANCE: "0.05"
+  STOP_LOSS_PERCENT: "0.80"
+  TAKE_PROFIT_PERCENT: "5.00"
+  MAX_GAS_PRICE: "50000000000"
+  PRIORITY_GAS_BOOST: "3000000000"
+  WS_RECONNECT_DELAY: "5"
+  WS_PING_INTERVAL: "30"
+  ETHERSCAN_DELAY: "0.2"
+  OKX_API_DELAY: "0.1"
+  HTTP_TIMEOUT: "10"
+  MAX_RETRIES: "3"
+  CONNECTION_POOL_SIZE: "100"
+  LOG_LEVEL: "INFO"
+  ENVIRONMENT: "production"
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: elite-bot-secrets
+  namespace: elite-trading
+type: Opaque
+stringData:
+  # These should be base64 encoded in production
+  OKX_API_KEY: "your_okx_api_key_here"
+  OKX_SECRET_KEY: "your_okx_secret_key_here"
+  OKX_PASSPHRASE: "your_okx_passphrase_here"
+  ETH_HTTP_URL: "https://eth-mainnet.alchemyapi.io/v2/YOUR_API_KEY"
+  ETH_WS_URL: "wss://eth-mainnet.ws.alchemyapi.io/v2/YOUR_API_KEY"
+  ETHERSCAN_API_KEY: "your_etherscan_api_key_here"
+  DISCORD_WEBHOOK: "https://discord.com/api/webhooks/YOUR_WEBHOOK_URL"
+  WALLET_ADDRESS: "0xYourWalletAddressHere"
+  WALLET_PRIVATE_KEY: "your_private_key_here"
+  REDIS_PASSWORD: "your_redis_password_here"
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: elite-bot-data-pvc
+  namespace: elite-trading
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: fast-ssd
+
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: elite-alpha-bot-pdb
+  namespace: elite-trading
+spec:
+  minAvailable: 0  # Allow complete shutdown for trading bot
+  selector:
+    matchLabels:
+      app: elite-alpha-bot
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: elite-bot-network-policy
+  namespace: elite-trading
+spec:
+  podSelector:
+    matchLabels:
+      app: elite-alpha-bot
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: monitoring
+    - podSelector:
+        matchLabels:
+          app: prometheus
+    ports:
+    - protocol: TCP
+      port: 8080
+    - protocol: TCP
+      port: 8081
+  egress:
+  - {} # Allow all egress for external API calls
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluent-bit-config
+  namespace: elite-trading
+data:
+  fluent-bit.conf: |
+    [SERVICE]
+        Flush         1
+        Log_Level     info
+        Daemon        off
+        Parsers_File  parsers.conf
+
+    [INPUT]
+        Name              tail
+        Path              /app/logs/*.log
+        Parser            json
+        Tag               elite-bot.*
+        Refresh_Interval  5
+
+    [OUTPUT]
+        Name  forward
+        Match *
+        Host  elasticsearch.monitoring
+        Port  9200
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: elite-alpha-bot-hpa
+  namespace: elite-trading
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: elite-alpha-bot
+  minReplicas: 1
+  maxReplicas: 1  # Trading bot should not scale horizontally
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 80
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
